@@ -82,3 +82,22 @@ header div {
   min-width: 3em;
   text-align: center;
 }
+
+.fa-cog {
+  font-size: 24px;
+  color: #000;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover .fa-cog {
+  color: #555;
+}
+
+header div a, header div button {
+  margin-right: 10px;
+}
