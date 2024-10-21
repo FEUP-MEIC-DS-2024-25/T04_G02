@@ -35,7 +35,7 @@ def generate_response():
 
     prompt = str([
         "With the use of the following list of requirements, give a lista of user userstories.\n",
-        "Give in a format like csv, where there is index, and the user story, type string so wrapped in quotation marks.\n",
+        "Give in a format like csv, where there is index, and the user story, both type string so wrapped in quotation marks.\n",
         "Don't add any more text execpt the csv format.\n",
         f"Here is the list of requirements:\n{query}."])
     response = model.generate_content(prompt)

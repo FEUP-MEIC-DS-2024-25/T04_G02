@@ -52,7 +52,7 @@ header div {
   background-color:var(--background-color);
   margin: 2em;
   padding: 1em;
-  border: 2px solid var(--text-color);
+  border: 2px solid var(--background-color);
   border-radius: 20px;
 }
 
@@ -66,4 +66,19 @@ header div {
   color: var(--primary-color);
   background-color:var(--background-color);
   border: 2px solid var(--background-color);
+}
+
+#userStoriesTable{
+  margin: 2em auto
+}
+
+#userStoriesTable th{
+  color: var(--background-color);
+  background-color: var(--primary-color);
+  height: 2em;
+}
+
+#userStoriesTable td, #userStoriesTable th {
+  min-width: 3em;
+  text-align: center;
 }
