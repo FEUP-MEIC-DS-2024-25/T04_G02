@@ -41,5 +41,5 @@ def generate_response():
     response = model.generate_content(prompt)
     return jsonify({"response": response.text})
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    app.run(port=5001, debug=True)

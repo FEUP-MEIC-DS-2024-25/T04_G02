@@ -7,7 +7,7 @@ function getRowTable(row: string | string[]) {
 }
 
 function generateUserStories(dataInput: any){
-    fetch('http://127.0.0.1:5000/generate', {
+    fetch('http://127.0.0.1:5001/generate', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -122,3 +122,33 @@ function createPromptBar(): void {
 }
 
 createPromptBar();
+
+document.addEventListener('DOMContentLoaded', () => {
+    const settingsButton = document.getElementById('settingsButton');
+    const settingsDropdown = document.getElementById('settingsDropdown');
+    const dueDateRadios = document.querySelectorAll('input[name="dueDate"]');
+    const dueDatePicker = document.getElementById('dueDatePicker');
+
+    settingsButton?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        settingsDropdown?.classList.toggle('show');
+    });
+
+    dueDateRadios.forEach((radio: Element) => {
+        if (radio instanceof HTMLInputElement) {
+            radio.addEventListener('change', () => {
+                if (dueDatePicker) {
+                    dueDatePicker.style.display = radio.value === 'set' ? 'block' : 'none';
+                }
+            });
+        }
+    });
+
+    document.addEventListener('click', (e) => {
+        if (settingsDropdown?.classList.contains('show') && 
+            !settingsDropdown.contains(e.target as Node) && 
+            e.target !== settingsButton) {
+            settingsDropdown.classList.remove('show');
+        }
+    });
+});
