@@ -54,12 +54,46 @@ function createTable(data: any[]): void {
             td.innerText = cleanedCell;
             td.style.border = '1px solid black';
             td.style.padding = '8px';
+            
+            if (rowData.indexOf(cell) === rowData.length - 1) {
+                const feedbackDiv = document.createElement('div');
+                feedbackDiv.className = 'feedback-container';
+                
+                const thumbsUpBtn = document.createElement('button');
+                thumbsUpBtn.innerHTML = '<i class="far fa-thumbs-up"></i>';
+                thumbsUpBtn.className = 'feedback-btn';
+                thumbsUpBtn.onclick = () => handleFeedback(true, i);
+                
+                const thumbsDownBtn = document.createElement('button');
+                thumbsDownBtn.innerHTML = '<i class="far fa-thumbs-down"></i>';
+                thumbsDownBtn.className = 'feedback-btn';
+                thumbsDownBtn.onclick = () => handleFeedback(false, i);
+                
+                feedbackDiv.appendChild(thumbsUpBtn);
+                feedbackDiv.appendChild(thumbsDownBtn);
+                td.appendChild(feedbackDiv);
+            }
+            
             row.appendChild(td);
         });
         table.appendChild(row);
     }
-    // append table
-    document.body.appendChild(table)
+    
+    document.body.appendChild(table);
+}
+
+function handleFeedback(isPositive: boolean, index: number): void {
+    const feedbackContainer = document.querySelectorAll(`#userStoriesTable tr:nth-child(${index + 2}) .feedback-container`)[0];
+    const buttons = feedbackContainer.querySelectorAll('.feedback-btn i');
+    
+    buttons.forEach(icon => {
+        icon.classList.remove('fas');
+        icon.classList.add('far');
+    });
+    
+    const selectedIcon = buttons[isPositive ? 0 : 1];
+    selectedIcon.classList.remove('far');
+    selectedIcon.classList.add('fas');
 }
 
 function createPromptBar(): void {
