@@ -1,9 +1,28 @@
-function splitAtFirstComma(row: string | string[]) {
+function getRowTable(row: string | string[]) {
     const index = row.indexOf(',');
     if (index === -1) return [row];
     const firstPart = row.slice(0, index);
     const secondPart = row.slice(index + 1);
     return [firstPart, secondPart];
+}
+
+function generateUserStories(dataInput: any){
+    fetch('http://127.0.0.1:5000/generate', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ query: dataInput }), 
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Response from server:', data);
+        const rows = data.response.split('\n');
+        data = rows.map((row: string) => getRowTable(row));
+        const table = document.getElementById("userStoriesTable")
+        if(table) table.parentNode?.removeChild(table);
+        createTable(data);
+    })
 }
 
 function createTable(data: any[]): void {
@@ -65,27 +84,40 @@ function createPromptBar(): void {
     sectionInput.appendChild(submitButton);
     
     submitButton.addEventListener('click', () => {
-        const userInput = (document.getElementById('userInput') as HTMLTextAreaElement).value;
-
-        fetch('http://127.0.0.1:5000/generate', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ query: userInput }), 
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Response from server:', data);
-            const rows = data.response.split('\n');
-            data = rows.map((row: string) => splitAtFirstComma(row));
-            const table = document.getElementById("userStoriesTable")
-            if(table) table.parentNode?.removeChild(table);
-            createTable(data);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+        const files = uploadButton.files;
+        if(files && files?.length > 0 ){
+            let combinedContent = '';
+            const fileReaders: Promise<void>[] = [];
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+                const fileReadPromise = new Promise<void>((resolve, reject) => {
+                    reader.onload = (event) => {
+                        const content = event.target?.result;
+                        if (typeof content === 'string') {
+                            combinedContent += content + '\n';
+                            resolve();
+                        } else {
+                            reject(new Error('Error reading file as text'));
+                        }
+                    };
+                    reader.onerror = (error) => {
+                        reject(error);
+                    };
+                    reader.readAsText(file);
+                });
+                fileReaders.push(fileReadPromise);
+            }
+            Promise.all(fileReaders)
+            .then(() => {
+                const dataInput = combinedContent
+                generateUserStories(dataInput)
+            })
+        }
+        else {
+            const dataInput = (document.getElementById('userInput') as HTMLTextAreaElement).value;
+            generateUserStories(dataInput)
+        }
     });
 }
 
