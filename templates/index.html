@@ -1,27 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="../static/css/style.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <title>ReqToStory</title>
-    </head>
-    <body>
-        <header>
-            <h1>ReqToStory</h1>
-            <div>
-                <a>About</a>
-                <a>Contact</a>
-                <button type="button" aria-label="Settings">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../static/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>ReqToStory</title>
+</head>
+<body>
+    <header>
+        <h1>ReqToStory</h1>
+        <h2>AI Generator of User Stories</h2>
+        <div>
+            <a>About</a>
+            <a>Contact</a>
+            <div class="settings-container">
+                <button type="button" aria-label="Settings" id="settingsButton">
                     <i class="fas fa-cog"></i>
                 </button>
+                <div class="settings-dropdown" id="settingsDropdown">
+                    <h2>Settings</h2>
+                    <hr>
+                    <div class="settings-item">
+                        <h3>Priority</h3>
+                        <div class="settings-options">
+                            <label><input type="radio" name="priority" value="high"> High</label>
+                            <label><input type="radio" name="priority" value="medium"> Medium</label>
+                            <label><input type="radio" name="priority" value="low"> Low</label>
+                        </div>
+                    </div>
+                    <div class="settings-item">
+                        <h3>User Stories Status</h3>
+                        <div class="settings-options">
+                            <label><input type="radio" name="status" value="new"> New</label>
+                            <label><input type="radio" name="status" value="in-progress"> In Progress</label>
+                            <label><input type="radio" name="status" value="completed"> Completed</label>
+                        </div>
+                    </div>
+                    <div class="settings-item">
+                        <h3>Group By</h3>
+                        <div class="settings-options">
+                            <label><input type="radio" name="groupBy" value="theme"> Group by Theme</label>
+                            <label><input type="radio" name="groupBy" value="priority"> Group by Priority</label>
+                            <label><input type="radio" name="groupBy" value="status"> Group by Status</label>
+                        </div>
+                    </div>
+                    <div class="settings-item">
+                        <h3>Assign To</h3>
+                        <div class="settings-options">
+                            <select name="assignTo" class="settings-select">
+                                <option value="">Assign to team member</option>
+                                <option value="member1">Team Member 1</option>
+                                <option value="member2">Team Member 2</option>
+                                <option value="member3">Team Member 3</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="settings-item">
+                        <h3>Due Date</h3>
+                        <div class="settings-options">
+                            <label><input type="radio" name="dueDate" value="set"> Set Due Date</label>
+                            <label><input type="radio" name="dueDate" value="none"> No due date</label>
+                            <input type="date" id="dueDatePicker" class="date-picker" style="display: none;">
+                        </div>
+                    </div>
+                    <div class="settings-footer">
+                        <button class="settings-save-btn">Save Settings</button>
+                    </div>
+                </div>
             </div>
-        </header>
-        <main>
-            <section id="sectionInput"></section>
-        </main>
-    </body>
+        </div>
+    </header>
+    <main>
+        <p class="input-instructions">Write your requirements in the text box, or alternatively, upload your text file containing the list.</p>
+        <section id="sectionInput"></section>
+    </main>
     <script src="../static/script/index.js"></script>
+</body>
 </html>
