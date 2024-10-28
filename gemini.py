@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
+import json
 import google.generativeai as genai
 import os
 from dotenv import load_dotenv
@@ -34,12 +35,17 @@ def generate_response():
         return jsonify({"error": "No query provided"}), 400
 
     prompt = str([
-        "With the use of the following list of requirements, give a lista of user userstories.\n",
-        "Give in a format like csv, where there is index, and the user story, both type string so wrapped in quotation marks.\n",
-        "Don't add any more text execpt the csv format.\n",
-        f"Here is the list of requirements:\n{query}."])
+        "With the use of the following requirements, give a list of userstories and a list of possible acceptance criteria for each user story.\n",
+        "The userstories have the format: As a [...], I want [...], so that [...]\n",
+        "Each acceptance test inside the acceptance criteria have the given/when/then format"
+        "Give in a JSON format, where there is \"index\" and the \"user_story\" are type string so wrapped in quotation marks, and the \"acceptance_criteria\" a list of acceptance tests, all of type string so wrapped in quotation marks within a JSON list.\n",
+        "Don't add any more text or newlines to the JSON.\n",
+        "The result must be a JSON list of dici.\n",
+        f"Here is the requirements:\n{query}."
+        ])
     response = model.generate_content(prompt)
-    return jsonify({"response": response.text})
+
+    return jsonify({"response": response.text}), 200
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001, debug=True)

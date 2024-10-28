@@ -16,74 +16,172 @@ function generateUserStories(dataInput: any){
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Response from server:', data);
-        const rows = data.response.split('\n');
-        data = rows.map((row: string) => getRowTable(row));
+        //console.log('Response from server:',  data);
+        const list = JSON.parse(data.response);
+        console.log(list);
+        //const rows = data.response.split('\n');
+        //data = rows.map((row: string) => getRowTable(row));
         const table = document.getElementById("userStoriesTable")
         if(table) table.parentNode?.removeChild(table);
-        createTable(data);
+        createFakeTable(list);
     })
 }
 
-function createTable(data: any[]): void {
-    // create table
-    const table = document.createElement('table');
-    table.style.borderCollapse = 'collapse';
-    table.id = "userStoriesTable";
-    // create header
-    const rowHeader = document.createElement('tr');
-    const thNumber = document.createElement('th');
-    thNumber.innerHTML = "Index";
-    const thUserStories = document.createElement('th');
-    thUserStories.innerHTML = "User Story";
-    // append header
-    rowHeader.appendChild(thNumber);
-    rowHeader.appendChild(thUserStories);
-    table.appendChild(rowHeader);
-    // create and append body
-    for (let i = 0; i < data.length; i++) {
-        const rowData = data[i];
-        if (rowData.length === 1 && rowData[0] === '') {
-            continue;
-        }
-        const row = document.createElement('tr');
-        rowData.forEach((cell: string) => {
-            const td = document.createElement('td');
-            let cleanedCell = cell.replace(/^"|"$/g, '').trim();         
-            cleanedCell = cleanedCell.replace(/"/g, '').trim()
-            td.innerText = cleanedCell;
-            td.style.border = '1px solid black';
-            td.style.padding = '8px';
+
+function createFakeTable(data: any[]): void {
+  /// create table
+  const table = document.createElement('table');
+  table.style.borderCollapse = 'collapse';
+  table.id = "userStoriesTable";
+  // create header
+  const rowHeader = document.createElement('tr');
+  const thNumber = document.createElement('th');
+  thNumber.innerHTML = "Index";
+  const thUserStories = document.createElement('th');
+  thUserStories.innerHTML = "User Story";
+
+  const feed = document.createElement('th');
+  feed.innerHTML = "Feedback";
+  // append header
+  rowHeader.appendChild(thNumber);
+  rowHeader.appendChild(thUserStories);
+  rowHeader.appendChild(feed);
+  table.appendChild(rowHeader);
+  // create and append body
+  data.forEach(rowData => {
+        const row = document.createElement('tr');   
+        const index = document.createElement('td');
+        index.innerText = rowData.index;
+
+        row.appendChild(index);
+
+        
+
+        const userStory = document.createElement('td');
+
+        const userStoryDiv = document.createElement('div');
+
+        const t =  document.createElement('p');
+        t.innerText = rowData.user_story;
+
+        userStoryDiv.appendChild(t);
+
+        const feedback = document.createElement('td');
+          
+        const feedbackDiv = document.createElement('div');
+        feedbackDiv.className = 'feedback-container';
+
+        const acList = document.createElement('ul');
+        acList.innerText = "Acceptance criteria"
+        rowData.acceptance_criteria.forEach((ac:  string) =>{
+            const ele = document.createElement('li');
+            ele.innerText = ac;
+            acList.appendChild(ele)
+        })
+        acList.addEventListener('click', function() {
+            const itens = acList.querySelectorAll('li');
             
-            if (rowData.indexOf(cell) === rowData.length - 1) {
-                const feedbackDiv = document.createElement('div');
-                feedbackDiv.className = 'feedback-container';
-                
-                const thumbsUpBtn = document.createElement('button');
-                thumbsUpBtn.innerHTML = '<i class="far fa-thumbs-up"></i>';
-                thumbsUpBtn.className = 'feedback-btn';
-                thumbsUpBtn.onclick = () => handleFeedback(true, i);
-                
-                const thumbsDownBtn = document.createElement('button');
-                thumbsDownBtn.innerHTML = '<i class="far fa-thumbs-down"></i>';
-                thumbsDownBtn.className = 'feedback-btn';
-                thumbsDownBtn.onclick = () => handleFeedback(false, i);
-                
-                feedbackDiv.appendChild(thumbsUpBtn);
-                feedbackDiv.appendChild(thumbsDownBtn);
-                td.appendChild(feedbackDiv);
+            let isAnyItemVisible = false;
+            itens.forEach(item => {
+              item.classList.toggle('show'); // Adiciona ou remove a classe 'show'
+              if (item.classList.contains('show')) {
+                isAnyItemVisible = true;
+              }
+            });
+        
+            // Ajusta a altura da célula td (e da linha) dependendo da visibilidade dos itens
+            if (isAnyItemVisible) {
+                userStory.style.height = 'auto'; // Expande a altura
+            } else {
+                userStory.style.height = ''; // Retorna à altura padrão
             }
-            
-            row.appendChild(td);
-        });
+        })   
+
+        userStoryDiv.appendChild(acList);
+
+        userStory.appendChild(userStoryDiv)
+
+        const thumbsUpBtn = document.createElement('button');
+        thumbsUpBtn.innerHTML = '<i class="far fa-thumbs-up"></i>';
+        thumbsUpBtn.className = 'feedback-btn';
+        thumbsUpBtn.onclick = () => handleFeedback(true, feedbackDiv);
+        
+        const thumbsDownBtn = document.createElement('button');
+        thumbsDownBtn.innerHTML = '<i class="far fa-thumbs-down"></i>';
+        thumbsDownBtn.className = 'feedback-btn';
+        thumbsDownBtn.onclick = () => handleFeedback(false, feedbackDiv);
+        
+        feedbackDiv.appendChild(thumbsUpBtn);
+        feedbackDiv.appendChild(thumbsDownBtn);
+        feedback.appendChild(feedbackDiv);
+        
+        row.appendChild(userStory);
+        row.appendChild(feedback);
         table.appendChild(row);
-    }
-    
-    document.body.appendChild(table);
+  })
+  
+  document.body.appendChild(table);
 }
 
-function handleFeedback(isPositive: boolean, index: number): void {
-    const feedbackContainer = document.querySelectorAll(`#userStoriesTable tr:nth-child(${index + 2}) .feedback-container`)[0];
+
+//function createTable(data: any[]): void {
+//    // create table
+//    const table = document.createElement('table');
+//    table.style.borderCollapse = 'collapse';
+//    table.id = "userStoriesTable";
+//    // create header
+//    const rowHeader = document.createElement('tr');
+//    const thNumber = document.createElement('th');
+//    thNumber.innerHTML = "Index";
+//    const thUserStories = document.createElement('th');
+//    thUserStories.innerHTML = "User Story";
+//    // append header
+//    rowHeader.appendChild(thNumber);
+//    rowHeader.appendChild(thUserStories);
+//    table.appendChild(rowHeader);
+//    // create and append body
+//    for (let i = 0; i < data.length; i++) {
+//        const rowData = data[i];
+//        if (rowData.length === 1 && rowData[0] === '') {
+//            continue;
+//        }
+//        const row = document.createElement('tr');
+//        rowData.forEach((cell: string) => {
+//            const td = document.createElement('td');
+//            let cleanedCell = cell.replace(/^"|"$/g, '').trim();         
+//            cleanedCell = cleanedCell.replace(/"/g, '').trim()
+//            td.innerText = cleanedCell;
+//            td.style.border = '1px solid black';
+//            td.style.padding = '8px';
+//            
+//            if (rowData.indexOf(cell) === rowData.length - 1) {
+//                const feedbackDiv = document.createElement('div');
+//                feedbackDiv.className = 'feedback-container';
+//                
+//                const thumbsUpBtn = document.createElement('button');
+//                thumbsUpBtn.innerHTML = '<i class="far fa-thumbs-up"></i>';
+//                thumbsUpBtn.className = 'feedback-btn';
+//                thumbsUpBtn.onclick = () => handleFeedback(true, i);
+//                
+//                const thumbsDownBtn = document.createElement('button');
+//                thumbsDownBtn.innerHTML = '<i class="far fa-thumbs-down"></i>';
+//                thumbsDownBtn.className = 'feedback-btn';
+//                thumbsDownBtn.onclick = () => handleFeedback(false, i);
+//                
+//                feedbackDiv.appendChild(thumbsUpBtn);
+//                feedbackDiv.appendChild(thumbsDownBtn);
+//                td.appendChild(feedbackDiv);
+//            }
+//            
+//            row.appendChild(td);
+//        });
+//        table.appendChild(row);
+//    }
+//    
+//    document.body.appendChild(table);
+//}
+
+function handleFeedback(isPositive: boolean,  feedbackContainer: HTMLDivElement): void {
     const buttons = feedbackContainer.querySelectorAll('.feedback-btn i');
     
     buttons.forEach(icon => {

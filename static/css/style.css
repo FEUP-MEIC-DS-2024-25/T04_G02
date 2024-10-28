@@ -81,18 +81,49 @@ header a:hover {
 }
 
 #userStoriesTable{
-  margin: 2em auto
+  margin: 2em auto;
+  width: 80vw;
 }
 
 #userStoriesTable th{
   color: var(--background-color);
   background-color: var(--primary-color);
   height: 2em;
+  border: 1px solid var(--primary-color);
 }
 
-#userStoriesTable td, #userStoriesTable th {
+#userStoriesTable ul{
+  padding-left: 0;
+  color: var(--background-color);
+  background-color: var(--primary-color);
+
+}
+
+#userStoriesTable tr{
+  min-width: 80vm;
+}
+
+#userStoriesTable td, #userStoriesTable th{
   min-width: 3em;
   text-align: center;
+}
+
+#userStoriesTable td, #userStoriesTable li{
+  border: 1px solid #000000;
+  border-collapse: collapse;
+  padding: 8px;
+}
+
+#userStoriesTable li{
+  background-color: #ffffff;
+  color: #000000;
+  display:none;
+}
+
+/* Transição suave para mostrar e esconder */
+#userStoriesTable li.show {
+  display: block;
+  transition: all 0.3s ease;
 }
 
 .fa-cog {
@@ -247,7 +278,6 @@ header div a, header div button {
 
 .feedback-container {
   display: inline-block;
-  margin-left: 20px;
 }
 
 .feedback-btn {

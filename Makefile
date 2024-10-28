@@ -14,6 +14,7 @@ stop:
 
 rm-container:
 	docker rm $(CONTAINER_NAME)
+	docker rmi $(DOCKER_IMAGE):latest
 
 logs:
 	docker logs $(CONTAINER_NAME)
