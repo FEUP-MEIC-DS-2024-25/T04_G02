@@ -1,0 +1,50 @@
+#divModalInfo {
+  color: var(--body-text-color);
+}
+
+#divModalInfo #infoButton {
+  color: var(--input-background-color);
+  font-size: 2em;
+  margin: 0.5em;
+}
+
+#divModalInfo #infoButton i {
+  color: var(--input-text-color);
+}
+
+#sectionInput{
+  background-color: var(--header-background-color);
+  color: var(--header-text-color);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+  text-align: center;
+  padding: 2em;
+  margin: 2em
+}
+
+#sectionInput #userInput {
+  background-color: var(--input-background-color);
+  color: var(--input-text-color);
+  border: 5px solid var(--input-background-color);
+  border-radius: 20px;
+  display: block;
+  margin: auto;
+  padding: 2em;
+  width: 80%;
+  resize: none;
+}
+
+#sectionInput #submitBotton, #sectionInput #uploadButton::file-selector-button{
+  background-color: var(--input-background-color);
+  color: var(--input-text-color);
+  border: 5px solid var(--input-background-color);
+  border-radius: 20px;
+  margin: 1em;
+  padding: 0.5em;
+}
+
+#sectionInput #submitBotton:hover, #sectionInput #uploadButton::file-selector-button:hover{
+  color: var(--input-background-color);
+  background-color: var(--input-text-color);
+  border: 5px solid var(--input-text-color);
+  cursor: pointer;
+}

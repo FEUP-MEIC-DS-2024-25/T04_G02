@@ -33,6 +33,7 @@ function createFakeTable(data: any[]): void {
   const table = document.createElement('table');
   table.style.borderCollapse = 'collapse';
   table.id = "userStoriesTable";
+
   // create header
   const rowHeader = document.createElement('tr');
   const thNumber = document.createElement('th');
@@ -83,17 +84,16 @@ function createFakeTable(data: any[]): void {
             
             let isAnyItemVisible = false;
             itens.forEach(item => {
-              item.classList.toggle('show'); // Adiciona ou remove a classe 'show'
+              item.classList.toggle('show'); 
               if (item.classList.contains('show')) {
                 isAnyItemVisible = true;
               }
             });
         
-            // Ajusta a altura da célula td (e da linha) dependendo da visibilidade dos itens
             if (isAnyItemVisible) {
-                userStory.style.height = 'auto'; // Expande a altura
+                userStory.style.height = 'auto';
             } else {
-                userStory.style.height = ''; // Retorna à altura padrão
+                userStory.style.height = '';
             }
         })   
 
@@ -121,65 +121,129 @@ function createFakeTable(data: any[]): void {
   })
   
   document.body.appendChild(table);
+
+  let sectionUserStories = document.getElementById('sectionUserStories') as HTMLElement;
+    if (sectionUserStories) {
+        sectionUserStories.parentNode?.removeChild(sectionUserStories);
+    }
+
+    sectionUserStories = document.createElement('section');
+    sectionUserStories.id = "sectionUserStories"
+    
+   
+    const yesUserStoriesH = document.createElement('h3')
+    yesUserStoriesH.id = "yesUserStoriesH";
+    yesUserStoriesH.textContent = "Generated User Stories"
+
+    const exportButton = document.createElement('button');
+    exportButton.id = 'exportButton';
+    exportButton.textContent = "Download"
+
+    const regenerateButton = document.createElement('button');
+    regenerateButton.id = 'regenerateButton';
+    regenerateButton.textContent = "Regenerate"
+
+    const tableContainer = document.createElement('div');
+    tableContainer.id = 'tableContainer';
+
+    const buttonContainer = document.createElement('div');
+    buttonContainer.id = 'buttonContainer'
+
+    buttonContainer.appendChild(exportButton)
+    buttonContainer.appendChild(regenerateButton)
+    tableContainer.appendChild(table);
+
+    sectionUserStories.appendChild(yesUserStoriesH);
+    sectionUserStories.appendChild(buttonContainer)
+    sectionUserStories.appendChild(tableContainer);
+    document.body.appendChild(sectionUserStories)
 }
 
+/*
+function createTable(data: any[]): void {
+    
+    // create table
+    const table = document.createElement('table');
+    table.style.borderCollapse = 'collapse';
+    table.id = "userStoriesTable";
+    
+    // create and append body
+    for (let i = 0; i < data.length; i++) {
+        const rowData = data[i];
 
-//function createTable(data: any[]): void {
-//    // create table
-//    const table = document.createElement('table');
-//    table.style.borderCollapse = 'collapse';
-//    table.id = "userStoriesTable";
-//    // create header
-//    const rowHeader = document.createElement('tr');
-//    const thNumber = document.createElement('th');
-//    thNumber.innerHTML = "Index";
-//    const thUserStories = document.createElement('th');
-//    thUserStories.innerHTML = "User Story";
-//    // append header
-//    rowHeader.appendChild(thNumber);
-//    rowHeader.appendChild(thUserStories);
-//    table.appendChild(rowHeader);
-//    // create and append body
-//    for (let i = 0; i < data.length; i++) {
-//        const rowData = data[i];
-//        if (rowData.length === 1 && rowData[0] === '') {
-//            continue;
-//        }
-//        const row = document.createElement('tr');
-//        rowData.forEach((cell: string) => {
-//            const td = document.createElement('td');
-//            let cleanedCell = cell.replace(/^"|"$/g, '').trim();         
-//            cleanedCell = cleanedCell.replace(/"/g, '').trim()
-//            td.innerText = cleanedCell;
-//            td.style.border = '1px solid black';
-//            td.style.padding = '8px';
-//            
-//            if (rowData.indexOf(cell) === rowData.length - 1) {
-//                const feedbackDiv = document.createElement('div');
-//                feedbackDiv.className = 'feedback-container';
-//                
-//                const thumbsUpBtn = document.createElement('button');
-//                thumbsUpBtn.innerHTML = '<i class="far fa-thumbs-up"></i>';
-//                thumbsUpBtn.className = 'feedback-btn';
-//                thumbsUpBtn.onclick = () => handleFeedback(true, i);
-//                
-//                const thumbsDownBtn = document.createElement('button');
-//                thumbsDownBtn.innerHTML = '<i class="far fa-thumbs-down"></i>';
-//                thumbsDownBtn.className = 'feedback-btn';
-//                thumbsDownBtn.onclick = () => handleFeedback(false, i);
-//                
-//                feedbackDiv.appendChild(thumbsUpBtn);
-//                feedbackDiv.appendChild(thumbsDownBtn);
-//                td.appendChild(feedbackDiv);
-//            }
-//            
-//            row.appendChild(td);
-//        });
-//        table.appendChild(row);
-//    }
-//    
-//    document.body.appendChild(table);
-//}
+        if (rowData.length === 1 || rowData[0] === '' || rowData[1] == '' || !rowData[0] || !rowData[1]) {
+            continue;
+        }
+
+        const row = document.createElement('tr');
+
+        const td = document.createElement('td');
+        let cleanedCell = rowData[1].replace(/^"|"$/g, '').trim();         
+        cleanedCell = cleanedCell.replace(/"/g, '').trim()
+        td.innerText = cleanedCell;
+        td.style.border = '1px solid black';
+        td.style.padding = '8px';
+        
+        if (rowData.indexOf(rowData[1]) === rowData.length - 1) {
+            const feedbackDiv = document.createElement('div');
+            feedbackDiv.className = 'feedback-container';
+            
+            const thumbsUpBtn = document.createElement('button');
+            thumbsUpBtn.innerHTML = '<i class="far fa-thumbs-up"></i>';
+            thumbsUpBtn.className = 'feedback-btn';
+            thumbsUpBtn.onclick = () => handleFeedback(true, i-1);
+            
+            const thumbsDownBtn = document.createElement('button');
+            thumbsDownBtn.innerHTML = '<i class="far fa-thumbs-down"></i>';
+            thumbsDownBtn.className = 'feedback-btn';
+            thumbsDownBtn.onclick = () => handleFeedback(false, i-1);
+            
+            feedbackDiv.appendChild(thumbsUpBtn);
+            feedbackDiv.appendChild(thumbsDownBtn);
+            td.appendChild(feedbackDiv);
+        }     
+    
+        row.appendChild(td);
+        table.appendChild(row);
+    }
+
+    let sectionUserStories = document.getElementById('sectionUserStories') as HTMLElement;
+    if (sectionUserStories) {
+        sectionUserStories.parentNode?.removeChild(sectionUserStories);
+    }
+
+    sectionUserStories = document.createElement('section');
+    sectionUserStories.id = "sectionUserStories"
+    
+   
+    const yesUserStoriesH = document.createElement('h3')
+    yesUserStoriesH.id = "yesUserStoriesH";
+    yesUserStoriesH.textContent = "Generated User Stories"
+
+    const exportButton = document.createElement('button');
+    exportButton.id = 'exportButton';
+    exportButton.textContent = "Download"
+
+    const regenerateButton = document.createElement('button');
+    regenerateButton.id = 'regenerateButton';
+    regenerateButton.textContent = "Regenerate"
+
+    const tableContainer = document.createElement('div');
+    tableContainer.id = 'tableContainer';
+
+    const buttonContainer = document.createElement('div');
+    buttonContainer.id = 'buttonContainer'
+
+    buttonContainer.appendChild(exportButton)
+    buttonContainer.appendChild(regenerateButton)
+    tableContainer.appendChild(table);
+
+    sectionUserStories.appendChild(yesUserStoriesH);
+    sectionUserStories.appendChild(buttonContainer)
+    sectionUserStories.appendChild(tableContainer);
+    document.body.appendChild(sectionUserStories)
+}
+*/
 
 function handleFeedback(isPositive: boolean,  feedbackContainer: HTMLDivElement): void {
     const buttons = feedbackContainer.querySelectorAll('.feedback-btn i');

@@ -1,0 +1,78 @@
+
+#sectionUserStories {
+  background-color: var(--header-background-color);
+  color: var(--header-text-color);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+  text-align: center;
+  padding: 2em;
+  margin: 2em
+}
+
+#sectionUserStories #exportButton, #sectionUserStories #regenerateButton{
+  background-color: var(--input-background-color);
+  color: var(--input-text-color);
+  border: 5px solid var(--input-background-color);
+  border-radius: 20px;
+  margin: 1em;
+  padding: 0.5em;
+}
+
+#sectionUserStories #exportButton:hover, #sectionUserStories #regenerateButton:hover{
+  color: var(--input-background-color);
+  background-color: var(--input-text-color);
+  border: 5px solid var(--input-text-color);
+  cursor: pointer;
+}
+
+#userStoriesTable i {
+  color: var(--body-background-color);
+}
+
+#userStoriesTable {
+  color: var(--body-background-color);
+  padding: 1em;
+}
+
+#userStoriesTable th, #userStoriesTable td{
+  min-height: 2em;
+  min-width: 3em;
+  text-align: center;
+}
+
+#tableContainer {
+  background-color: var(--input-background-color);
+  color: var(--input-text-color);
+  border: 5px solid var(--input-background-color);
+  border-radius: 20px;
+  padding: 1em;
+  margin: 1em auto;
+  display: inline-block
+}
+
+#buttonContainer{
+  display: block;
+}
+
+#userStoriesTable ul{
+  padding-left: 0;
+  color: var(--body-background-color);
+  background-color: var(--body-text-color);
+
+}
+
+#userStoriesTable li{
+  border: 1px solid #000000;
+  border-collapse: collapse;
+  padding: 8px;
+}
+
+#userStoriesTable li{
+  background-color: #ffffff;
+  color: #000000;
+  display:none;
+}
+
+#userStoriesTable li.show {
+  display: block;
+  transition: all 0.3s ease;
+}

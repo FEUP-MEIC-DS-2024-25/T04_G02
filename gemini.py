@@ -37,7 +37,7 @@ def generate_response():
     prompt = str([
         "With the use of the following requirements, give a list of userstories and a list of possible acceptance criteria for each user story.\n",
         "The userstories have the format: As a [...], I want [...], so that [...]\n",
-        "Each acceptance test inside the acceptance criteria have the given/when/then format"
+        "Each acceptance test inside the acceptance criteria have the given/when/then format\n"
         "Give in a JSON format, where there is \"index\" and the \"user_story\" are type string so wrapped in quotation marks, and the \"acceptance_criteria\" a list of acceptance tests, all of type string so wrapped in quotation marks within a JSON list.\n",
         "Don't add any more text or newlines to the JSON.\n",
         "The result must be a JSON list of dici.\n",
