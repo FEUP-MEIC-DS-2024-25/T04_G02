@@ -23,12 +23,12 @@ function generateUserStories(dataInput: any){
         //data = rows.map((row: string) => getRowTable(row));
         const table = document.getElementById("userStoriesTable")
         if(table) table.parentNode?.removeChild(table);
-        createFakeTable(list);
+        createFakeTable(list, dataInput);
     })
 }
 
 
-function createFakeTable(data: any[]): void {
+function createFakeTable(data: any[], initialInput: any): void {
   /// create table
   const table = document.createElement('table');
   table.style.borderCollapse = 'collapse';
@@ -138,10 +138,12 @@ function createFakeTable(data: any[]): void {
     const exportButton = document.createElement('button');
     exportButton.id = 'exportButton';
     exportButton.textContent = "Download"
+    exportButton.addEventListener('click', () => downloadUserStoriesAsJson(data));
 
     const regenerateButton = document.createElement('button');
     regenerateButton.id = 'regenerateButton';
     regenerateButton.textContent = "Regenerate"
+    regenerateButton.addEventListener('click', () => generateUserStories(initialInput));
 
     const tableContainer = document.createElement('div');
     tableContainer.id = 'tableContainer';
@@ -157,6 +159,25 @@ function createFakeTable(data: any[]): void {
     sectionUserStories.appendChild(buttonContainer)
     sectionUserStories.appendChild(tableContainer);
     document.body.appendChild(sectionUserStories)
+}
+
+function downloadUserStoriesAsJson(data: any[]): void {
+    const jsonData = data.map(item => ({
+        index: item.index,
+        user_story: item.user_story,
+        acceptance_criteria: item.acceptance_criteria
+    }));
+
+    const blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: 'application/json' });
+    
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'user_stories.json'; 
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
 }
 
 /*
