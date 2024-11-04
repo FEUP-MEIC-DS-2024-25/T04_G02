@@ -33,7 +33,7 @@
   resize: none;
 }
 
-#sectionInput #submitBotton, #sectionInput #uploadButton::file-selector-button{
+#sectionInput #submitBotton, #sectionInput::file-selector-button{
   background-color: var(--input-background-color);
   color: var(--input-text-color);
   border: 5px solid var(--input-background-color);
@@ -42,7 +42,22 @@
   padding: 0.5em;
 }
 
-#sectionInput #submitBotton:hover, #sectionInput #uploadButton::file-selector-button:hover{
+#sectionInput #submitBotton:hover, #sectionInput::file-selector-button:hover{
+  color: var(--input-background-color);
+  background-color: var(--input-text-color);
+  border: 5px solid var(--input-text-color);
+  cursor: pointer;
+}
+
+#uploadButton::file-selector-button {
+  background-color: var(--input-background-color);
+  color: var(--input-text-color);
+  border: 5px solid var(--input-background-color);
+  border-radius: 20px;
+  padding: 0.5em;
+}
+
+#uploadButton::file-selector-button:hover {
   color: var(--input-background-color);
   background-color: var(--input-text-color);
   border: 5px solid var(--input-text-color);
