@@ -6,25 +6,27 @@ function getRowTable(row: string | string[]) {
     return [firstPart, secondPart];
 }
 
-function generateUserStories(dataInput: any){
-    fetch('http://127.0.0.1:5001/generate', {
+function generateUserStories(dataInput: any): Promise<void> {
+    return fetch('http://127.0.0.1:5001/generate', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ query: dataInput }), 
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(data => {
-        //console.log('Response from server:',  data);
         const list = JSON.parse(data.response);
         console.log(list);
-        //const rows = data.response.split('\n');
-        //data = rows.map((row: string) => getRowTable(row));
         const table = document.getElementById("userStoriesTable")
         if(table) table.parentNode?.removeChild(table);
         createFakeTable(list, dataInput);
-    })
+    });
 }
 
 
@@ -299,29 +301,42 @@ function handleFeedback(isPositive: boolean,  feedbackContainer: HTMLDivElement)
     selectedIcon.classList.add('fas');
 }
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const ALLOWED_FILE_TYPES = [
+    'text/plain',     
+    'text/markdown',  
+    'text/csv'        
+];
+
 function createPromptBar(): void {
-    // create section
     const sectionInput = document.getElementById('sectionInput') as HTMLElement;
     
-    // create and append textarea element
+    // Create and append textarea element
     const inputElement = document.createElement('textarea');
     inputElement.id = 'userInput';
     inputElement.placeholder = 'Enter something...';
-    inputElement.rows = 10
+    inputElement.rows = 10;
     sectionInput.appendChild(inputElement);
 
     // Create container for file controls
     const fileControlsContainer = document.createElement('div');
     fileControlsContainer.id = 'fileControlsContainer';
 
-    // create upload file button
+    // Create file input error message element
+    const errorMessage = document.createElement('div');
+    errorMessage.id = 'fileError';
+    errorMessage.style.color = 'red';
+    errorMessage.style.display = 'none';
+    fileControlsContainer.appendChild(errorMessage);
+
+    // Create upload file button
     const uploadButton = document.createElement('input');
     uploadButton.type = "file";
     uploadButton.id = 'uploadButton';
-    uploadButton.innerText = 'Upload File';
+    uploadButton.accept = '.txt,.md,.csv';  // Limited to simple text formats
     fileControlsContainer.appendChild(uploadButton);
 
-    // create delete button
+    // Create delete button
     const deleteButton = document.createElement('button');
     deleteButton.id = 'deleteButton';
     deleteButton.innerHTML = '<i class="fas fa-trash"></i> Remove File';
@@ -330,15 +345,39 @@ function createPromptBar(): void {
 
     sectionInput.appendChild(fileControlsContainer);
 
-    // create and append submit button
+    // Create and append submit button
     const submitButton = document.createElement('button');
     submitButton.id = 'submitBotton';
     submitButton.innerText = 'Submit';
     sectionInput.appendChild(submitButton);
 
     // Add event listeners
-    uploadButton.addEventListener('change', () => {
-        if (uploadButton.files && uploadButton.files.length > 0) {
+    uploadButton.addEventListener('change', (event) => {
+        const target = event.target as HTMLInputElement;
+        const files = target.files;
+        errorMessage.style.display = 'none';
+        
+        if (files && files.length > 0) {
+            const file = files[0];
+            
+            // Validate file size
+            if (file.size > MAX_FILE_SIZE) {
+                errorMessage.textContent = 'File size exceeds 5MB limit';
+                errorMessage.style.display = 'block';
+                uploadButton.value = '';
+                deleteButton.style.display = 'none';
+                return;
+            }
+            
+            // Validate file type
+            if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+                errorMessage.textContent = 'Only text files (.txt, .md, .csv) are supported';
+                errorMessage.style.display = 'block';
+                uploadButton.value = '';
+                deleteButton.style.display = 'none';
+                return;
+            }
+            
             deleteButton.style.display = 'inline-block';
         } else {
             deleteButton.style.display = 'none';
@@ -348,42 +387,59 @@ function createPromptBar(): void {
     deleteButton.addEventListener('click', () => {
         uploadButton.value = '';
         deleteButton.style.display = 'none';
+        errorMessage.style.display = 'none';
     });
     
     submitButton.addEventListener('click', () => {
         const files = uploadButton.files;
-        if(files && files?.length > 0 ){
-            let combinedContent = '';
-            const fileReaders: Promise<void>[] = [];
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                const reader = new FileReader();
-                const fileReadPromise = new Promise<void>((resolve, reject) => {
-                    reader.onload = (event) => {
-                        const content = event.target?.result;
-                        if (typeof content === 'string') {
-                            combinedContent += content + '\n';
-                            resolve();
-                        } else {
-                            reject(new Error('Error reading file as text'));
-                        }
-                    };
-                    reader.onerror = (error) => {
-                        reject(error);
-                    };
-                    reader.readAsText(file);
-                });
-                fileReaders.push(fileReadPromise);
+        if (files && files?.length > 0) {
+            const file = files[0];
+            
+            if (file.size > MAX_FILE_SIZE) {
+                errorMessage.textContent = 'File size exceeds 5MB limit';
+                errorMessage.style.display = 'block';
+                return;
             }
-            Promise.all(fileReaders)
-            .then(() => {
-                const dataInput = combinedContent
-                generateUserStories(dataInput)
-            })
-        }
-        else {
+            
+            if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+                errorMessage.textContent = 'Only text files (.txt, .md, .csv) are supported';
+                errorMessage.style.display = 'block';
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const content = event.target?.result;
+                if (typeof content === 'string') {
+                    generateUserStories(content)
+                        .catch(error => {
+                            if (error.message.includes('429') || error.message.includes('Resource exhausted')) {
+                                errorMessage.textContent = 'Server is busy. Please try again in a few moments or try with a smaller file.';
+                                errorMessage.style.display = 'block';
+                            } else {
+                                errorMessage.textContent = 'Error processing file. Please try again.';
+                                errorMessage.style.display = 'block';
+                            }
+                        });
+                }
+            };
+            reader.onerror = () => {
+                errorMessage.textContent = 'Error reading file. Please try again.';
+                errorMessage.style.display = 'block';
+            };
+            reader.readAsText(file);
+        } else {
             const dataInput = (document.getElementById('userInput') as HTMLTextAreaElement).value;
             generateUserStories(dataInput)
+                .catch(error => {
+                    if (error.message.includes('429') || error.message.includes('Resource exhausted')) {
+                        errorMessage.textContent = 'Server is busy. Please try again in a few moments.';
+                        errorMessage.style.display = 'block';
+                    } else {
+                        errorMessage.textContent = 'Error processing request. Please try again.';
+                        errorMessage.style.display = 'block';
+                    }
+                });
         }
     });
 }
