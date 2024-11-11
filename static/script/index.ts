@@ -162,22 +162,42 @@ function createFakeTable(data: any[], initialInput: any): void {
 }
 
 function downloadUserStoriesAsJson(data: any[]): void {
-    const jsonData = data.map(item => ({
-        index: item.index,
-        user_story: item.user_story,
-        acceptance_criteria: item.acceptance_criteria
-    }));
+    if (!Array.isArray(data)) {
+        console.error("Invalid data: Expected an array.");
+        return;
+    }
 
-    const blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: 'application/json' });
-    
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'user_stories.json'; 
-    document.body.appendChild(link);
+    const jsonData = data.map((item, index) => {
+        if (typeof item !== 'object' || item === null) {
+            console.warn(`Item at index ${index} is not a valid object.`);
+            return { index, user_story: "Invalid data", acceptance_criteria: "Invalid data" };
+        }
 
-    link.click();
+        const { index: itemIndex, user_story, acceptance_criteria } = item;
 
-    document.body.removeChild(link);
+        if (typeof itemIndex !== 'number' || typeof user_story !== 'string' || typeof acceptance_criteria !== 'string') {
+            console.warn(`Invalid fields in item at index ${index}`);
+            return {
+                index: itemIndex ?? "Invalid index",
+                user_story: user_story ?? "Invalid user story",
+                acceptance_criteria: acceptance_criteria ?? "Invalid acceptance criteria"
+            };
+        }
+
+        return { index: itemIndex, user_story, acceptance_criteria };
+    });
+
+    try {
+        const blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: 'application/json' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'user_stories.json'; 
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    } catch (error) {
+        console.error("An error occurred during the JSON download process:", error);
+    }
 }
 
 /*
