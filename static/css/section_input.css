@@ -63,3 +63,28 @@
   border: 5px solid var(--input-text-color);
   cursor: pointer;
 }
+
+#fileControlsContainer {
+  display: inline-block;
+  margin: 1em;
+}
+
+#deleteButton {
+  background-color: var(--input-background-color);
+  color: var(--input-text-color);
+  border: 5px solid var(--input-background-color);
+  border-radius: 20px;
+  padding: 0.5em;
+  margin-left: 1em;
+}
+
+#deleteButton:hover {
+  color: var(--input-background-color);
+  background-color: var(--input-text-color);
+  border: 5px solid var(--input-text-color);
+  cursor: pointer;
+}
+
+#deleteButton i {
+  margin-right: 5px;
+}
