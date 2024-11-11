@@ -282,23 +282,53 @@ function handleFeedback(isPositive: boolean,  feedbackContainer: HTMLDivElement)
 function createPromptBar(): void {
     // create section
     const sectionInput = document.getElementById('sectionInput') as HTMLElement;
+    
     // create and append textarea element
     const inputElement = document.createElement('textarea');
     inputElement.id = 'userInput';
     inputElement.placeholder = 'Enter something...';
     inputElement.rows = 10
     sectionInput.appendChild(inputElement);
-    // create and append upload file button
+
+    // Create container for file controls
+    const fileControlsContainer = document.createElement('div');
+    fileControlsContainer.id = 'fileControlsContainer';
+
+    // create upload file button
     const uploadButton = document.createElement('input');
     uploadButton.type = "file";
     uploadButton.id = 'uploadButton';
     uploadButton.innerText = 'Upload File';
-    sectionInput.appendChild(uploadButton)
+    fileControlsContainer.appendChild(uploadButton);
+
+    // create delete button
+    const deleteButton = document.createElement('button');
+    deleteButton.id = 'deleteButton';
+    deleteButton.innerHTML = '<i class="fas fa-trash"></i> Remove File';
+    deleteButton.style.display = 'none';
+    fileControlsContainer.appendChild(deleteButton);
+
+    sectionInput.appendChild(fileControlsContainer);
+
     // create and append submit button
     const submitButton = document.createElement('button');
     submitButton.id = 'submitBotton';
     submitButton.innerText = 'Submit';
     sectionInput.appendChild(submitButton);
+
+    // Add event listeners
+    uploadButton.addEventListener('change', () => {
+        if (uploadButton.files && uploadButton.files.length > 0) {
+            deleteButton.style.display = 'inline-block';
+        } else {
+            deleteButton.style.display = 'none';
+        }
+    });
+
+    deleteButton.addEventListener('click', () => {
+        uploadButton.value = '';
+        deleteButton.style.display = 'none';
+    });
     
     submitButton.addEventListener('click', () => {
         const files = uploadButton.files;
