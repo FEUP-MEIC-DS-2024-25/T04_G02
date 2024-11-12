@@ -88,3 +88,10 @@
 #deleteButton i {
   margin-right: 5px;
 }
+
+#fileError {
+  color: #ff4444;
+  margin: 0.5em 0;
+  font-size: 0.9em;
+  text-align: left;
+}
