@@ -34,7 +34,8 @@ CREATE TABLE Epic (
 );
 
 CREATE TABLE UserStory (
-    index INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
+    index INTEGER NOT NULL,
     content TEXT NOT NULL,
     feedback INTEGER CHECK (feedback IN (-1, 0, 1)) DEFAULT 0,
     active BOOLEAN DEFAULT TRUE,
@@ -46,7 +47,7 @@ CREATE TABLE UserStory (
 );
 
 CREATE TABLE UserStoryHistory (
-    userstory_id INTEGER REFERENCES UserStory(index) ON DELETE CASCADE,
+    userstory_id INTEGER REFERENCES UserStory(id) ON DELETE CASCADE,
     version INTEGER NOT NULL DEFAULT 1,
     new_content TEXT NOT NULL,
     feedback INTEGER CHECK (feedback IN (-1, 0, 1)) DEFAULT 0,

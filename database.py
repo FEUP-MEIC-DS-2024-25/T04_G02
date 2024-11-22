@@ -22,7 +22,7 @@ def get_project_contend(project_id):
     if project:
        return None
     project_contend = []
-    original_requirement = Requirements.query.filter(Requirements.project_id == project_id).one()
+    original_requirement = Requirements.query.filter(Requirements.project_id == project_id).first()
     user_stories = get_user_stories_by_requiremente_id(original_requirement.id, 0)
     req_dic = {}
     req_dic.version = 0
@@ -119,10 +119,10 @@ def get_all_theme():
 #
 
 def save_user_story(index, content, req_id, feedback=0, theme_id=None, epic_id=None, req_ver = None):
-    if(req_ver):
-        user_story = UserStory.query.filter_by(and_(UserStory.req_id == req_id, UserStory.req_ver == req_ver)).one()
+    if(not req_ver):
+        user_story = UserStory.query.filter(and_(UserStory.req_id == req_id, UserStory.req_ver == req_ver)).first()
     else:
-        user_story = UserStory.query.filter_by(UserStory.req_id == req_id).one()
+        user_story = UserStory.query.filter(UserStory.req_id == req_id).first()
     if user_story:
         history_entry = UserStoryHistory(
             userstory_id=user_story.id,
@@ -171,7 +171,7 @@ def save_user_story(index, content, req_id, feedback=0, theme_id=None, epic_id=N
 #    return None
 #
 def save_requirement(project_id, content):
-    requirement = Requirements.query.filter_by(Requirements.project_id == project_id).one()
+    requirement = Requirements.query.filter(Requirements.project_id == project_id).first()
     if requirement:
         history_entry = RequirementsHistory(
             original_id=requirement.id,

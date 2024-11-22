@@ -35,11 +35,12 @@ class Epic(db.Model):
    __table_args__ = {'schema': 'req_to_story'}
    id = db.Column(db.Integer, primary_key=True)
    name = db.Column(db.Text, unique=True, nullable=False)
-   
+
 class UserStory(db.Model):
    __tablename__ = 'userstory'
    __table_args__ = {'schema': 'req_to_story'}
-   index = db.Column(db.Integer, primary_key=True)
+   id = db.Column(db.Integer, primary_key=True)
+   index = db.Column(db.Integer,  nullable=False)
    content = db.Column(db.Text, nullable=False)
    feedback = db.Column(db.Integer, db.CheckConstraint('feedback IN (-1, 0, 1)'), default=0)
    active = db.Column(db.Boolean, default=True)
@@ -58,7 +59,7 @@ class UserStory(db.Model):
 class UserStoryHistory(db.Model):
    __tablename__ = 'userstoryhistory'
    __table_args__ = {'schema': 'req_to_story'}
-   userstory_id = db.Column(db.Integer, db.ForeignKey('req_to_story.userstory.index', ondelete='CASCADE'), primary_key=True)
+   userstory_id = db.Column(db.Integer, db.ForeignKey('req_to_story.userstory.id', ondelete='CASCADE'), primary_key=True)
    version = db.Column(db.Integer, primary_key=True, server_default='1')
    new_content = db.Column(db.Text, nullable=False)
    feedback = db.Column(db.Integer, db.CheckConstraint('feedback IN (-1, 0, 1)'), default=0)
