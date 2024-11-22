@@ -37,28 +37,25 @@ def generate_response():
 
     requirements_id = save_requirement(project_id, query)
 
-    #if not query:
-    #    return jsonify({"error": "No query provided"}), 400
-
-    #prompt = str(
-    #    [
-    #        "With the use of the following requirements, give a list of userstories and a list of possible acceptance criteria for each user story.\n",
-    #        "The userstories have the format: As a [...], I want [...], so that [...]\n",
-    #        "Each acceptance test inside the acceptance criteria have the given/when/then format\n"
-    #        'Give in a JSON format, where there is "index" and the "user_story" are type string so wrapped in quotation marks, and the "acceptance_criteria" a list of acceptance tests, all of type string so wrapped in quotation marks within a JSON list.\n',
-    #        "The result must be only a JSON list, no more information.\n",
-    #        "Don't add any more text or newlines to the JSON, without ```json```.\n",
-    #        f"Here is the requirements:\n{query}.",
-    #    ]
-    #)
-
-    #response = model.generate_content(prompt)
-    #result = response.replace("```json", "").replace("```", "")
-
-    result = """[{"index": 1, 
-              "user_story": "test",
-              "acceptance_criteria":["oi"]}]"""
-    
+    if not query:
+        return jsonify({"error": "No query provided"}), 400
+    prompt = str(
+        [
+            "With the use of the following requirements, give a list of userstories and a list of possible acceptance criteria for each user story.\n",
+            "The userstories have the format: As a [...], I want [...], so that [...]\n",
+            "Each acceptance test inside the acceptance criteria have the given/when/then format\n"
+            'Give in a JSON format, where there is "index" and the "user_story" are type string so wrapped in quotation marks, and the "acceptance_criteria" a list of acceptance tests, all of type string so wrapped in quotation marks within a JSON list.\n',
+            "The result must be only a JSON list, no more information.\n",
+            "Don't add any more text or newlines to the JSON, without ```json```.\n",
+            f"Here is the requirements:\n{query}.",
+        ]
+    )
+    response = model.generate_content(prompt)
+    result = response.text.replace("```json", "").replace("```", "")
+    #result = """[{"index": 1, 
+    #          "user_story": "test",
+    #          "acceptance_criteria":["oi"]}]"""
+    #
     save_user_stories(result, requirements_id)
 
     return jsonify({"response": result}), 200

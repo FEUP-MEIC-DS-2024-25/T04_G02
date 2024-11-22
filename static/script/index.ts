@@ -16,12 +16,13 @@ function generateUserStories(dataInput: any) {
     })
         .then((response) => response.json())
         .then((data) => {
-            console.log("Response from server:", data.response);
+            //console.log("Response from server:", data.response);
             const list = JSON.parse(data.response);
-            console.log(list);
+            //console.log(list);
             const table = document.getElementById("userStoriesTable");
             if (table) table.parentNode?.removeChild(table);
             createFakeTable(list, dataInput);
+            getProjects()
         });
 }
 
@@ -68,10 +69,14 @@ function getProjects() {
         while (selectElement.firstChild) {
             selectElement.removeChild(selectElement.firstChild);
         }
-        data.response.forEach((project: { id: string; text: string; }) => {
+        const defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.text = "Select a Project"; 
+        selectElement.appendChild(defaultOption)
+        data.response.forEach((project: { id: any ; name: string; }) => {
             const optionElement = document.createElement('option');
-            optionElement.value = project.id;
-            optionElement.text = project.text;
+            optionElement.value = project.id.toString();
+            optionElement.text = project.name;
             selectElement.appendChild(optionElement);
         });
       })
@@ -81,7 +86,7 @@ function getProjects() {
 }
 
 function getProject(projectId: number) {
-    fetch(`http://localhost:5001/projects/${projectId}/content`, {
+    fetch(`http://localhost:5001/project/${projectId}/content`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -93,8 +98,7 @@ function getProject(projectId: number) {
         return response.json();
       })
       .then((data) => {
-        console.log("Response from server:", data);
-        
+        console.log("Response from server:", data.response);
       })
       .catch((error) => {
         console.error("Error fetching projects:", error);
@@ -282,8 +286,6 @@ function redirectToProject() {
     const projectId = selectElement.value;
   
     if (projectId) {
-      const url = `/projects/${projectId}`;
-      window.location.href = url;
       getProject(parseInt(projectId))
     }
   }
@@ -301,12 +303,6 @@ function createPromptBar(): void {
     projectSelect.onchange =  function() {
         redirectToProject();
     };
-    
-    const defaultOption = document.createElement("option");
-    defaultOption.value = "";
-    defaultOption.text = "Select a Project"; 
-    projectSelect.appendChild(defaultOption)
-    
 
     const projectInput = document.createElement('input');
     projectInput.type = 'text';
