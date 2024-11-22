@@ -21,8 +21,7 @@ function generateUserStories(dataInput: any): Promise<void> {
         return response.json();
     })
     .then(data => {
-        const list = JSON.parse(data.response);
-        console.log(list);
+        const list = JSON.parse(data.response.replace('```json','').replace('```',''));
         const table = document.getElementById("userStoriesTable")
         if(table) table.parentNode?.removeChild(table);
         createFakeTable(list, dataInput);
