@@ -1,37 +1,37 @@
-version: '3.9'
+version: "3.9"
 
 services:
-  reqtostory:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: reqtostory-container
-    ports:
-      - "5001:5001"
-    environment:
-      FLASK_APP: gemini.py
-    command: python3 ./gemini.py
+    reqtostory:
+        build: .
+    #    context: .
+    #    dockerfile: Dockerfile
+    #  container_name: reqtostory-container
+        ports:
+            - "5001:5001"
+    #  environment:
+    #    FLASK_APP: app.py
+    #  command: python3 ./gemini.py
 
-  postgres:
-    image: postgres:latest
-    restart: always
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: reqtostory
-    container_name: reqtostory-postgres
-    ports:
-      - "5432:5432"
-    volumes:
-      - "./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql"
+    postgres:
+        image: postgres:latest
+        restart: always
+        environment:
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            POSTGRES_DB: reqtostory
+        container_name: reqtostory-postgres
+        ports:
+            - "5432:5432"
+        volumes:
+            - "./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql"
 
-  pgadmin:
-    image: dpage/pgadmin4:8
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
-    container_name: reqtostory-pgadmin
-    ports:
-      - "4321:80"
-    depends_on:
-      - postgres
+    pgadmin:
+        image: dpage/pgadmin4:8
+        environment:
+            PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+            PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+        container_name: reqtostory-pgadmin
+        ports:
+            - "4321:80"
+        depends_on:
+            - postgres
