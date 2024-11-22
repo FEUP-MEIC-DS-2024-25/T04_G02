@@ -1,35 +1,37 @@
 from flask import Blueprint, request, jsonify,  render_template
+import json
 
 from database import *
+import logging
+
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)  
 
 api = Blueprint('api', __name__)
 
 
 
-@api.route('/users/<username>')
-def get_user(username):
-    # Lógica para buscar o usuário
-    return f'Usuário: {username}'
 
-
-@api.route('/projects')
+@api.route('/projects', methods=['GET'])
 def get_projects():
     try:
         projects = get_all_projects()
-        print("teste")
         return jsonify({"response": projects}), 200
     except Exception as e:
         print(f"Error fetching projects: {e}")
-        return jsonify({"error": "Internal Server Error TESTE"}), 500
-    
-@api.route('/project/<int:project_id>/content')
+        error_message = str(e)
+        return jsonify({"error": error_message}), 500
+
+@api.route('/project/<int:project_id>/content', methods=['GET'])
 def get_content(project_id):
     try:
-        content = get_project_contend(project_id)
+        content = get_project_content(project_id)
         return jsonify({"response": content}), 200
     except Exception as e:
         print(f"Error fetching content: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
+
 
 @api.route('/project/<id>/get')
 def get_project():
