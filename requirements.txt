@@ -2,3 +2,6 @@ flask
 flask_cors
 google.generativeai
 python-dotenv
+flask-sqlalchemy 
+psycopg2-binary
+sqlalchemy
