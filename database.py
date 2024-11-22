@@ -42,6 +42,7 @@ def get_project_contend(project_id):
     return project_contend
 
 def get_user_stories_by_requiremente_id(id, version):
+    user_stories
     if(version == 0):
         user_stories = UserStory.query.filter(UserStory.req_id == id).all()
     else:
@@ -148,7 +149,7 @@ def save_user_story(index, content, req_id, feedback=0, theme_id=None, epic_id=N
 
     db.session.commit()
 
-    return new_user_story.index
+    return index
 
 # def get_all_userstories():
 #    return UserStory.query.all()

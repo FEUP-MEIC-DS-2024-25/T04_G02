@@ -56,7 +56,7 @@ CREATE TABLE UserStoryHistory (
 
 CREATE TABLE AcceptanceTest (
     id SERIAL PRIMARY KEY,
-    userstory_index INTEGER REFERENCES UserStory(index)  ON DELETE CASCADE,
+    userstory_index INTEGER REFERENCES UserStory(id)  ON DELETE CASCADE,
     scenario TEXT NOT NULL,
     content TEXT NOT NULL
 );
