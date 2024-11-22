@@ -5,7 +5,7 @@ services:
         build: .
     #    context: .
     #    dockerfile: Dockerfile
-    #  container_name: reqtostory-container
+        container_name: reqtostory-container
         ports:
             - "5001:5001"
     #  environment:
