@@ -68,7 +68,7 @@ class UserStoryHistory(db.Model):
 #    __tablename__ = 'acceptancetest'
 #    __table_args__ = {'schema': 'req_to_story'}
 #    id = db.Column(db.Integer, primary_key=True)
-#    userstory_index = db.Column(db.Integer, db.ForeignKey('req_to_story.userstory.index', ondelete='CASCADE'))
+#    userstory_index = db.Column(db.Integer, db.ForeignKey('req_to_story.userstory.id', ondelete='CASCADE'))
 #    scenario = db.Column(db.Text, nullable=False)
 #    content = db.Column(db.Text, nullable=False)
 #
