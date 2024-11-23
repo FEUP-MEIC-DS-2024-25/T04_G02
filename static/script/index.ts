@@ -6,6 +6,18 @@ function getRowTable(row: string | string[]) {
     return [firstPart, secondPart];
 }
 
+function regenerationConfirmation(dataInput: any) {
+    const userConfirmed = window.confirm(
+        "Are you sure you want to continue the user stories regeneration process?"
+    );
+
+    if (userConfirmed) {
+        generateUserStories(dataInput);
+    } else {
+        console.log("Regeneration canceled.");
+    }
+}
+
 function generateUserStories(dataInput: any): Promise<void> {
     return fetch('http://127.0.0.1:5001/generate', {
         method: 'POST',
@@ -144,7 +156,7 @@ function createFakeTable(data: any[], initialInput: any): void {
     const regenerateButton = document.createElement('button');
     regenerateButton.id = 'regenerateButton';
     regenerateButton.textContent = "Regenerate"
-    regenerateButton.addEventListener('click', () => generateUserStories(initialInput));
+    regenerateButton.addEventListener('click', () => regenerationConfirmation(initialInput));
 
     const tableContainer = document.createElement('div');
     tableContainer.id = 'tableContainer';
