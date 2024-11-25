@@ -21,6 +21,23 @@
   margin: 2em
 }
 
+#divProject,  #project-dropdown {
+  background-color: var(--header-background-color);
+  color: var(--header-text-color);
+  justify-content: flex-start;
+  margin: 1em 2em 1em 2em;
+  display: flex;
+}
+
+
+#projectInput {
+  background-color: var(--input-background-color);
+  color: var(--input-text-color);
+  border: 5px solid var(--input-background-color);
+  border-radius: 20px;
+}
+
+
 #sectionInput #userInput {
   background-color: var(--input-background-color);
   color: var(--input-text-color);
