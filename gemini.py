@@ -2,11 +2,8 @@ from flask import Blueprint, request, jsonify
 import google.generativeai as genai
 import os
 from dotenv import load_dotenv
-from models import *
 from database import *
-import json
 import random
-import string
 
 model = genai.GenerativeModel(model_name="gemini-1.5-flash")
 
@@ -33,9 +30,9 @@ def generate_response():
     numero_aleatorio = random.randint(0, 100)
     project_name = f"teste{numero_aleatorio}"
 
-    project_id = save_project(project_name)
+    project_info = save_project(project_name)
 
-    requirements_id = save_requirement(project_id, query)
+    requirements_id = save_requirement(project_info, query, True)
 
     if not query:
         return jsonify({"error": "No query provided"}), 400
@@ -52,17 +49,11 @@ def generate_response():
     )
     response = model.generate_content(prompt)
     result = response.text.replace("```json", "").replace("```", "")
-    #result = """[{"index": 1, 
-    #          "user_story": "test",
-    #          "acceptance_criteria":["oi"]}]"""
-    #
-    save_user_stories(result, requirements_id)
+
+    save_user_stories(project_info[0], requirements_id, result)
+
 
     return jsonify({"response": result}), 200
 
-def save_user_stories(response, req_id):
-    data = json.loads(response)
-
-    for item in data:
-       save_user_story(item['index'], item['user_story'], req_id)
+    
 

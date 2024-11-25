@@ -1,193 +1,130 @@
-from sqlalchemy import and_
 from db import db
-from models import *
-
-def save_project(name):
-   project = Project.query.filter(Project.name == name).first()
-   if project:
-       return project.id
-   new_project = Project(name=name)
-   db.session.add(new_project)
-   db.session.commit()
-   return new_project.id
 
 def get_all_projects():
-   return Project.query.all()
+    projects_ref = db.collection("ReqToStory").stream()
+    return [{"id": project.id, "name": project.to_dict().get("name")} for project in projects_ref]
 
 def get_project_by_id(project_id):
-   return Project.query.get(project_id)
+    project_ref = db.collection("ReqToStory").document(project_id).get()
+    if project_ref.exists:
+        return {"id": project_ref.id}
+    return None
 
-def get_project_contend(project_id):
+def get_project_content(project_id):
     project = get_project_by_id(project_id)
-    if project:
-       return None
-    project_contend = []
-    original_requirement = Requirements.query.filter(Requirements.project_id == project_id).first()
-    user_stories = get_user_stories_by_requiremente_id(original_requirement.id, 0)
-    req_dic = {}
-    req_dic.version = 0
-    req_dic.content = requiremente.content
-    req_dic.user_stories = user_stories
-    project_contend.append(req_dic)
+    if not project:
+        return None
     
-    if (original_requirement.active == False):
-        all_vertion = RequirementsHistory.query.filter(RequirementsHistory.original_id == Requirements.id).all()
-        for requiremente in all_vertion:
-            req_dic = {}
-            req_dic.version = requiremente.version
-            req_dic.content = requiremente.new_content
-            req_dic.user_storys = get_user_stories_by_requiremente_id(requiremente.id_original,  requiremente.version)
-            project_contend.append(req_dic)
+    project_content = []
+    requirements_ref = db.collection("ReqToStory").document(project_id).collection("Requirements").stream()
 
-    return project_contend
+    for requirement in requirements_ref:
+        original_data = requirement.to_dict()
+        user_stories = get_user_stories_by_requirement_id(project_id, requirement.id)
 
-def get_user_stories_by_requiremente_id(id, version):
-    user_stories
-    if(version == 0):
-        user_stories = UserStory.query.filter(UserStory.req_id == id).all()
-    else:
-        user_stories = UserStory.query.filter(and_(UserStory.req_id == id, UserStory.version == version)).all()
+        req_dict = {
+            "version": original_data.get("version"),
+            "content": original_data.get("content"),
+            "user_stories": user_stories,
+        }
+        project_content.append(req_dict)
+
+    return project_content
+
+
+def get_user_stories_by_requirement_id(project_id, req_id):
+    user_stories_ref = db.collection("ReqToStory").document(project_id).collection("Requirements").document(req_id).collection("UserStories")
+
+    user_stories_versions = user_stories_ref.stream()
 
     all_content = []
 
-    for user_story in user_stories:
-        us_dic = {}
-        us_dic.index = user_stories.index
-
-        version_list = []
-
-        version_dic = {}
-        version_dic.version = 0
-        version_dic.content = user_story.content
-        version_dic.feedback = user_story.feedback
-        version_list.append(version_dic)
-        
-        all_vertion = get_user_stories_version_by_id(user_story.id)
-        for us in all_vertion:
-            version_dic = {}
-            version_dic.version = us.version
-            version_dic.content = us.new_content
-            version_dic.feedback = us.feedback
-            version_list.append(version_list)
-
-        us_dic.list = version_list
-        all_content.append(us_dic)
+    for us_version in user_stories_versions:
+        story_data = us_version.to_dict()
+        us_dict = {
+            "version": story_data.get("version"),
+            "user_stories": story_data.get("user_stories")
+        }
+        all_content.append(us_dict)
 
     return all_content
-            
-
-def get_user_stories_version_by_id(id):
-    user_stories =  UserStoryHistory.query.filter(UserStoryHistory.userstory_id == id).all()
-
-    for user_story in user_stories:
-        if user_story.status not in ('To Do', 'In Progress', 'Completed'):
-            raise ValueError('Status inválido')
-
-    return user_stories
 
 
 
-def add_theme(name: str):
-    theme = Theme.query.filter(Theme.name == name).first()
-    if theme:
-        return None
+def save_project(name):
+    projects_ref = db.collection("ReqToStory")
+    existing_project = projects_ref.where("name", "==", name).stream()
 
-    new_theme = Theme(name=name)
-    db.session.add(new_theme)
-    db.session.commit()
+    for project in existing_project:
+        return (project.id, project.n_versions) 
+    
+    docs = projects_ref.stream()
+    
+    max_id = 0
+    for doc in docs:
+        try:
+            doc_id = int(doc.id)  
+            if doc_id > max_id:
+                max_id = doc_id
+        except ValueError:
+            continue
 
-    return new_theme
+    id = max_id + 1
 
 
-def get_all_theme():
-    return Theme.query.all()
+    new_project = projects_ref.document(str(id))
+    new_project.set({"name": name, "n_versions": 0})
+
+    return (new_project.id, 0) 
 
 
-# def add_epic(name):
-#    epic = Epic.query.filter(Epic.name == name).first()
-#    if epic:
-#        return None
-#
-#    new_epic = Theme(name=name)
-#    db.session.add(new_epic)
-#    db.session.commit()
-#
-#    return new_epic
-#
-# def get_all_epic():
-#    return Epic.query.all()
-#
-#
+def save_requirement(project_info, content, new):
+    project_ref = db.collection("ReqToStory").document(project_info[0])
+    requirements_ref = project_ref.collection("Requirements")
 
-def save_user_story(index, content, req_id, feedback=0, theme_id=None, epic_id=None, req_ver = None):
-    if(not req_ver):
-        user_story = UserStory.query.filter(and_(UserStory.req_id == req_id, UserStory.req_ver == req_ver)).first()
+    if new:
+        requirement = requirements_ref.document()
+        requirement.set({
+            "version": project_info[1] + 1,
+            "content": content,
+            "n_us_versions": 0
+        })
+
+        project_ref.update({"n_versions": project_info[1] + 1})
+
+        return requirement.id
+
     else:
-        user_story = UserStory.query.filter(UserStory.req_id == req_id).first()
-    if user_story:
-        history_entry = UserStoryHistory(
-            userstory_id=user_story.id,
-            new_content=user_story.content,
-            feedback = user_story.feedback
-        )
-        db.session.add(history_entry)
+        last_version = len(list(requirements_ref.stream()))
 
-        user_story.content = content
-        db.session.add(user_story)
-    else:
-        new_user_story = UserStory(
-            index=index,
-            content=content,
-            feedback=feedback,
-            theme_id=theme_id,
-            epic_id=epic_id,
-            req_id=req_id,
-            req_ver=req_ver
-        )
-        db.session.add(new_user_story)
+        requirement = requirements_ref.where("version", "==", last_version).get()
 
+        if requirement:
+            requirement = requirement[0] 
+        else:
+            requirement = None  
 
-    db.session.commit()
-
-    return index
-
-# def get_all_userstories():
-#    return UserStory.query.all()
-#
-#
-# def update_userstory_feedback(userstory_id, feedback):
-#    userstory = UserStory.query.get(userstory_id)
-#    if userstory:
-#        userstory.feedback = feedback
-#        db.session.commit()
-#        return userstory
-#    return None
-#
-# def deactivate_userstory(userstory_id):
-#    userstory = UserStory.query.get(userstory_id)
-#    if userstory:
-#        userstory.active = False
-#        db.session.commit()
-#        return userstory
-#    return None
-#
-def save_requirement(project_id, content):
-    requirement = Requirements.query.filter(Requirements.project_id == project_id).first()
     if requirement:
-        history_entry = RequirementsHistory(
-            original_id=requirement.id,
-            new_content=requirement.content
-        )
-        db.session.add(history_entry)
-
-        requirement.content = content
-        db.session.add(requirement)
+        return requirement.id 
     else:
-        requirement = Requirements(
-            project_id=project_id,
-            content=content
-        )
-        db.session.add(requirement)
+        return None  
 
-    db.session.commit()
-    return requirement.id
+def save_user_stories(project_id, req_id, user_stories):
+    req_ref = db.collection("ReqToStory").document(project_id).collection("Requirements").document(req_id)
+
+
+    req_doc = req_ref.get()
+
+    if req_doc.exists:
+
+        n_us_versions = req_doc.to_dict().get('n_us_versions', 0)
+
+        req_us = req_ref.collection("UserStories")
+
+        new_user_stories = req_us.document()
+        new_user_stories.set({
+            "version": n_us_versions + 1,
+            "user_stories": user_stories
+        })
+
+        req_ref.update({"n_us_versions": n_us_versions + 1})

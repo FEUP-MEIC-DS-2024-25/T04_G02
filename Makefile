@@ -1,42 +1,24 @@
-#DOCKER_IMAGE=reqtostory
-#CONTAINER_NAME=reqtostory-container
-#PORT=5001
-#
-#build:
-#	docker build -t $(DOCKER_IMAGE) .
-#
-#run:
-#	-docker rm -f $(CONTAINER_NAME) 2>/dev/null || true
-#	docker run -p $(PORT):$(PORT) --name $(CONTAINER_NAME) $(DOCKER_IMAGE)
-#
-#stop:
-#	docker stop $(CONTAINER_NAME)
-#
-#rm-container:
-#	docker rm $(CONTAINER_NAME)
-#	docker rmi $(DOCKER_IMAGE):latest
-#
-#logs:
-#	docker logs $(CONTAINER_NAME)
-#
-#clean: stop rm-container
-#
-#rebuild: clean build run
-
+DOCKER_IMAGE=reqtostory
+CONTAINER_NAME=reqtostory-container
+PORT=5001
 
 build:
-	docker-compose build
+	docker build -t $(DOCKER_IMAGE) .
 
-up:
-	docker-compose up -d
+run:
+	-docker rm -f $(CONTAINER_NAME) 2>/dev/null || true
+	docker run -p $(PORT):$(PORT) --name $(CONTAINER_NAME) $(DOCKER_IMAGE)
 
 stop:
-	docker-compose stop
+	docker stop $(CONTAINER_NAME)
 
-rm:
-	docker-compose down --volumes
+rm-container:
+	docker rm $(CONTAINER_NAME)
+	docker rmi $(DOCKER_IMAGE):latest
 
 logs:
-	docker-compose logs -f postgres
+	docker logs $(CONTAINER_NAME)
 
-rebuild: rm build up
+clean: stop rm-container
+
+rebuild: clean build run

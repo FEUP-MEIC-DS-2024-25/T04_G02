@@ -2,15 +2,8 @@ from flask import Blueprint, request, jsonify,  render_template
 import json
 
 from database import *
-import logging
-
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)  
 
 api = Blueprint('api', __name__)
-
-
 
 
 @api.route('/projects', methods=['GET'])
@@ -26,32 +19,29 @@ def get_projects():
 @api.route('/project/<int:project_id>/content', methods=['GET'])
 def get_content(project_id):
     try:
-        content = get_project_content(project_id)
+        content = get_project_content(str(project_id))
+        if content is None:
+            return jsonify({"error": "Project not found"}), 404
         return jsonify({"response": content}), 200
     except Exception as e:
         print(f"Error fetching content: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
 
 
-@api.route('/project/<id>/get')
-def get_project():
-    return render_template('index.html')
-
-
-@api.route("/create_project", methods=["POST"])
-def create_theme():
-    data = request.get_json()
-    print(data.get("name"))
-
-    if not data or not data.get("name"):
-        return jsonify({"error": "Missing theme name"}), 400
-
-    project_name = data["name"]
-    project = add_theme(project_name)
-
-    if project == None:
-        return jsonify({"message": "Theme already exist"}), 201
-    return jsonify({"message": "Theme created successfully"}), 201
+#@api.route("/create_project", methods=["POST"])
+#def create_theme():
+#    data = request.get_json()
+#    print(data.get("name"))
+#
+#    if not data or not data.get("name"):
+#        return jsonify({"error": "Missing theme name"}), 400
+#
+#    project_name = data["name"]
+#    project = add_theme(project_name)
+#
+#    if project == None:
+#        return jsonify({"message": "Theme already exist"}), 201
+#    return jsonify({"message": "Theme created successfully"}), 201
 #
 #@api.route('/', methods=['GET', 'POST'])
 #def index():

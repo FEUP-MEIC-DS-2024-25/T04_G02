@@ -16,7 +16,7 @@ function generateUserStories(dataInput: any) {
     })
         .then((response) => response.json())
         .then((data) => {
-            //console.log("Response from server:", data.response);
+            console.log("Response from server:", data.response);
             const list = JSON.parse(data.response);
             //console.log(list);
             const table = document.getElementById("userStoriesTable");
