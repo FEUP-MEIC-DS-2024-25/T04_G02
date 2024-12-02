@@ -1,6 +1,11 @@
-import React from "react";
+import React, { useState } from "react";  
 
 const Header = () => {
+  const [showSettings, setShowSettings] = useState(false);
+
+  const toggleSettings = () => {
+    setShowSettings(!showSettings);
+  };
 
   return (
     <header>
@@ -13,18 +18,23 @@ const Header = () => {
       <div>
         <a href="#about">About</a>
         <a href="#contact">Contact</a>
-        <button type="button" aria-label="Settings" id="settingsButton">
+        <button 
+          type="button" 
+          aria-label="Settings" 
+          id="settingsButton"
+          onClick={toggleSettings}  
+        >
           <i className="fa fa-bars"></i>
         </button>
-        <SettingsDropdown />
+        <SettingsDropdown show={showSettings} /> 
       </div>
     </header>
   );
 };
 
-const SettingsDropdown = () => {
+const SettingsDropdown = ({ show }) => {  
   return (
-    <div className="settings-dropdown" id="settingsDropdown">
+    <div className={`settings-dropdown ${show ? 'show' : ''}`} id="settingsDropdown">
       <h2>Settings</h2>
       <hr />
       <div className="settings-item">
