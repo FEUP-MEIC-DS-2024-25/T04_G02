@@ -1,0 +1,10 @@
+/venv
+/node_modules
+package-lock.json
+*.js
+*.tsbuildinfo
+.DS_Store
+*.log
+*.env
+hero-alliance-feup-ds-24-25-24cfc82834ee.json
+my-ds-teste-firebase-adminsdk-gr29f-bc523b8a4f.json

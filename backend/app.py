@@ -1,6 +1,5 @@
 from flask import Flask, render_template
 from flask_cors import CORS
-#from flask_sqlalchemy import SQLAlchemy
 import google.generativeai as genai
 import os
 from dotenv import load_dotenv
@@ -20,9 +19,9 @@ app.register_blueprint(blueprint=blueprint)
 
 app.register_blueprint(api)
 
-@app.route("/")
-def home():
-    return render_template("index.html")
+#@app.route("/")
+#def home():
+#    return render_template("index.html")
 
 
 if __name__ == "__main__":

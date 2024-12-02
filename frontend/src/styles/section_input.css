@@ -1,0 +1,114 @@
+#divModalInfo {
+  color: var(--body-text-color);
+}
+
+#divModalInfo #infoButton {
+  color: var(--input-background-color);
+  font-size: 2em;
+  margin: 0.5em;
+}
+
+#divModalInfo #infoButton i {
+  color: var(--input-text-color);
+}
+
+#sectionInput{
+  background-color: var(--header-background-color);
+  color: var(--header-text-color);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+  text-align: center;
+  padding: 2em;
+  margin: 2em
+}
+
+#divProject,  #project-dropdown {
+  background-color: var(--header-background-color);
+  color: var(--header-text-color);
+  justify-content: flex-start;
+  margin: 1em 2em 1em 2em;
+  display: flex;
+}
+
+
+#projectInput {
+  background-color: var(--input-background-color);
+  color: var(--input-text-color);
+  border: 5px solid var(--input-background-color);
+  border-radius: 20px;
+}
+
+
+#sectionInput #userInput {
+  background-color: var(--input-background-color);
+  color: var(--input-text-color);
+  border: 5px solid var(--input-background-color);
+  border-radius: 20px;
+  display: block;
+  margin: auto;
+  padding: 2em;
+  width: 80%;
+  resize: none;
+}
+
+#sectionInput #submitBotton, #sectionInput::file-selector-button{
+  background-color: var(--input-background-color);
+  color: var(--input-text-color);
+  border: 5px solid var(--input-background-color);
+  border-radius: 20px;
+  margin: 1em;
+  padding: 0.5em;
+}
+
+#sectionInput #submitBotton:hover, #sectionInput::file-selector-button:hover{
+  color: var(--input-background-color);
+  background-color: var(--input-text-color);
+  border: 5px solid var(--input-text-color);
+  cursor: pointer;
+}
+
+#uploadButton::file-selector-button {
+  background-color: var(--input-background-color);
+  color: var(--input-text-color);
+  border: 5px solid var(--input-background-color);
+  border-radius: 20px;
+  padding: 0.5em;
+}
+
+#uploadButton::file-selector-button:hover {
+  color: var(--input-background-color);
+  background-color: var(--input-text-color);
+  border: 5px solid var(--input-text-color);
+  cursor: pointer;
+}
+
+#fileControlsContainer {
+  display: inline-block;
+  margin: 1em;
+}
+
+#deleteButton {
+  background-color: var(--input-background-color);
+  color: var(--input-text-color);
+  border: 5px solid var(--input-background-color);
+  border-radius: 20px;
+  padding: 0.5em;
+  margin-left: 1em;
+}
+
+#deleteButton:hover {
+  color: var(--input-background-color);
+  background-color: var(--input-text-color);
+  border: 5px solid var(--input-text-color);
+  cursor: pointer;
+}
+
+#deleteButton i {
+  margin-right: 5px;
+}
+
+#fileError {
+  color: #ff4444;
+  margin: 0.5em 0;
+  font-size: 0.9em;
+  text-align: left;
+}
