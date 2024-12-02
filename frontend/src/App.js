@@ -102,9 +102,9 @@ const App = () => {
       <Header />
       <main>
         <SectionInput />
-        <div>
+        <div id="sectionInput">
           <h1>User Story Generator</h1>
-          <div>
+          <div id="divProject">
             <label htmlFor="project-dropdown">Select Project: </label>
             <select
               id="project-dropdown"
@@ -127,56 +127,66 @@ const App = () => {
           </div>
             
           <textarea
+            id="userInput"
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
             placeholder="Enter text or leave empty to upload a file."
             rows={5}
-            style={{ width: "100%" }}
           />
     
-          <div>
+          <div id="fileControlsContainer">
             <input
+              id="uploadButton"
               type="file"
               accept=".txt,.md,.csv"
               onChange={handleFileChange}
             />
             {file && (
-              <button onClick={() => setFile(null)}>Remove File</button>
+              <button id="deleteButton" onClick={() => setFile(null)}>
+                <i className="fa fa-trash"></i>
+                Remove File
+              </button>
             )}
           </div>
           
-          {error && <div style={{ color: "red" }}>{error}</div>}
+          {error && <div id="fileError">{error}</div>}
           
-          <button onClick={handleSubmit}>Generate User Stories</button>
+          <button id="submitButton" onClick={handleSubmit}>Generate User Stories</button>
           
           {userStories.length > 0 && (
-            <div>
+            <div id="sectionUserStories">
               <h2>Generated User Stories</h2>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Index</th>
-                    <th>User Story</th>
-                    <th>Acceptance Criteria</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {userStories.map((story, idx) => (
-                    <tr key={idx}>
-                      <td>{story.index}</td>
-                      <td>{story.user_story}</td>
-                      <td>
-                        <ul>
-                          {story.acceptance_criteria.map((ac, i) => (
-                            <li key={i}>{ac}</li>
-                          ))}
-                        </ul>
-                      </td>
+              <div id="tableContainer">
+                <table id="userStoriesTable">
+                  <thead>
+                    <tr>
+                      <th>Index</th>
+                      <th>User Story</th>
+                      <th>Acceptance Criteria</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-              <button onClick={downloadUserStories}>Download Stories</button>
+                  </thead>
+                  <tbody>
+                    {userStories.map((story, idx) => (
+                      <tr key={idx}>
+                        <td>{story.index}</td>
+                        <td>{story.user_story}</td>
+                        <td>
+                          <ul>
+                            {story.acceptance_criteria.map((ac, i) => (
+                              <li key={i}>{ac}</li>
+                            ))}
+                          </ul>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div id="buttonContainer">
+                <button id="exportButton" onClick={downloadUserStories}>
+                  Download Stories
+                </button>
+              </div>
             </div>
           )}
         </div>
