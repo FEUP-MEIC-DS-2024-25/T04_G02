@@ -1,6 +1,7 @@
 import React from "react";
 
 const Header = () => {
+
   return (
     <header>
       <div>
@@ -13,7 +14,7 @@ const Header = () => {
         <a href="#about">About</a>
         <a href="#contact">Contact</a>
         <button type="button" aria-label="Settings" id="settingsButton">
-          <i className="fa-solid fa-bars"></i>
+          <i className="fa fa-bars"></i>
         </button>
         <SettingsDropdown />
       </div>

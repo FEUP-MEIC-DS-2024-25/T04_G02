@@ -1,15 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-//import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-import "bootstrap/dist/css/bootstrap.min.css";
-import "font-awesome/css/font-awesome.min.css";
-import "./styles/section_body.css";
-import "./styles/section_header.css";
-import "./styles/section_input.css";
-import "./styles/section_table.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import 'font-awesome/css/font-awesome.min.css';
+import './styles/section_body.css';
+import './styles/section_header.css';
+import './styles/section_input.css';
+import './styles/section_table.css';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

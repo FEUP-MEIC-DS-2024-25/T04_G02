@@ -9,7 +9,7 @@ const ModalInfo = () => {
         data-bs-target="#moreInfo"
         id="infoButton"
       >
-        <i className="fa-regular fa-circle-question"></i>
+        <i className="fa fa-question-circle"></i>
       </button>
       <div
         className="modal fade"
