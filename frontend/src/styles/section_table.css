@@ -100,3 +100,18 @@
 .feedback-btn:hover {
   opacity: 0.7;
 }
+
+.saveEdit {
+  color: white;
+}
+
+#editUserStory {
+  background-color: var(--input-background-color);
+  color: var(--input-text-color);
+  border: 5px solid var(--input-background-color);
+  border-radius: 20px;
+  display: block;
+  margin: auto;
+  padding: 1em;
+  resize: none;
+}

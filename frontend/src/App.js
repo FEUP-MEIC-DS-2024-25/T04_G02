@@ -9,6 +9,8 @@ const App = () => {
   const [file, setFile] = useState(null);
   const [userStories, setUserStories] = useState([]);
   const [error, setError] = useState("");
+  const [editingStory, setEditingStory] = useState(null);
+  const [tempContent, setTempContent] = useState("");
 
   useEffect(() => {
     fetchProjects();
@@ -97,6 +99,30 @@ const App = () => {
     link.click();
   };
 
+  const handleEditClick = (storyIndex) => {
+    const storyToEdit = userStories[storyIndex];
+    setEditingStory(storyIndex);
+    setTempContent(storyToEdit.user_story);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingStory(null);
+    setTempContent("");
+  };
+
+  const handleSaveEdit = () => {
+    if (!tempContent.trim()) {
+      setError("User story content cannot be empty.");
+      return;
+    }
+    const updatedStories = [...userStories];
+    updatedStories[editingStory].user_story = tempContent;
+    setUserStories(updatedStories);
+    setEditingStory(null);
+    setTempContent("");
+    setError("");
+  };
+
   return (
     <>
       <Header />
@@ -150,38 +176,63 @@ const App = () => {
           </div>
           
           {error && <div id="fileError">{error}</div>}
-          
-          <button id="submitButton" onClick={handleSubmit}>Generate User Stories</button>
-          
+  
+          <button id="submitButton" onClick={handleSubmit}>
+            Generate User Stories
+          </button>
+  
           {userStories.length > 0 && (
             <div id="sectionUserStories">
               <h2>Generated User Stories</h2>
-              <div id="tableContainer">
-                <table id="userStoriesTable">
-                  <thead>
-                    <tr>
-                      <th>Index</th>
-                      <th>User Story</th>
-                      <th>Acceptance Criteria</th>
+              <table id="userStoriesTable">
+                <thead>
+                  <tr>
+                    <th>Index</th>
+                    <th>User Story</th>
+                    <th>Acceptance Criteria</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {userStories.map((story, idx) => (
+                    <tr key={idx}>
+                      <td>{story.index}</td>
+                      <td>
+                        {editingStory === idx ? (
+                          <textarea
+                            id = "editUserStory"
+                            value={tempContent}
+                            onChange={(e) => setTempContent(e.target.value)}
+                            rows={3}
+                            style={{ width: '100%' }}
+                          />
+                        ) : (
+                          story.user_story
+                        )}
+                      </td>
+                      <td>
+                        <ul>
+                          {story.acceptance_criteria.map((ac, i) => (
+                            <li key={i}>{ac}</li>
+                          ))}
+                        </ul>
+                      </td>
+                      <td>
+                        {editingStory === idx ? (
+                          <>
+                            <button class="saveEdit" onClick={handleSaveEdit}>Save</button>
+                            <button class="saveEdit" onClick={handleCancelEdit}>Cancel</button>
+                          </>
+                        ) : (
+                          <button onClick={() => handleEditClick(idx)}>
+                            <img src="/edit.png" alt="Edit this user story" style={{ width: "20px", height: "20px" }} />
+                          </button>
+                        )}
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {userStories.map((story, idx) => (
-                      <tr key={idx}>
-                        <td>{story.index}</td>
-                        <td>{story.user_story}</td>
-                        <td>
-                          <ul>
-                            {story.acceptance_criteria.map((ac, i) => (
-                              <li key={i}>{ac}</li>
-                            ))}
-                          </ul>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </table>
               <div id="buttonContainer">
                 <button id="exportButton" onClick={downloadUserStories}>
                   Download Stories
