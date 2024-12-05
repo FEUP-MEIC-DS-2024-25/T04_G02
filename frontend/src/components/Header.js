@@ -1,16 +1,23 @@
 import React, { useState } from "react";  
 
-const Header = () => {
+const Header = ({setSideBarOpen, isSideBarOpen}) => {
   const [showSettings, setShowSettings] = useState(false);
 
   const toggleSettings = () => {
     setShowSettings(!showSettings);
   };
 
+  const toggleSidebar = () => {
+    setSideBarOpen(!isSideBarOpen);
+  };
+
   return (
     <header>
       <div>
-        <p>AI Generator of User Stories</p>
+        <button className="toggle-button" onClick={toggleSidebar}>
+          {isSideBarOpen ? '⮜' : '⮞'}
+        </button>
+          <span>AI Generator of User Stories</span>
       </div>
       <div>
         <h1>ReqToStory</h1>
