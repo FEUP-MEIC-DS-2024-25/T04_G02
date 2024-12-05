@@ -14,7 +14,6 @@ def get_project_content(project_id):
     project = get_project_by_id(project_id)
     if not project:
         return None
-    
     project_content = []
     requirements_ref = db.collection("ReqToStory").document(project_id).collection("Requirements").stream()
 
@@ -56,7 +55,8 @@ def save_project(name):
     existing_project = projects_ref.where("name", "==", name).stream()
 
     for project in existing_project:
-        return (project.id, project.n_versions) 
+        project_data = project.to_dict() 
+        return (project.id, project_data.get("n_versions", 0))
     
     docs = projects_ref.stream()
     

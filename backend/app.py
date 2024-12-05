@@ -13,16 +13,12 @@ api_key = os.getenv("API_KEY")
 genai.configure(api_key=api_key)
 
 app = Flask(__name__)
-CORS(app, resources={r".*": {"origins": "*"}})
+
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 app.register_blueprint(blueprint=blueprint)
 
 app.register_blueprint(api)
-
-#@app.route("/")
-#def home():
-#    return render_template("index.html")
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5001, debug=True)
