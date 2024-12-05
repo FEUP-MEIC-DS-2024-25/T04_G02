@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Header from "./components/Header";
 import SectionInput from "./components/SectionInput";
+import LanguageSelector from "./components/LanguageSelector";
 
 const App = () => {
   const [projects, setProjects] = useState([]);
@@ -11,6 +12,7 @@ const App = () => {
   const [error, setError] = useState("");
   const [editingStory, setEditingStory] = useState(null);
   const [tempContent, setTempContent] = useState("");
+  const [selectedLanguage, setSelectedLanguage] = useState("en");
 
   useEffect(() => {
     fetchProjects();
@@ -73,7 +75,10 @@ const App = () => {
       const response = await fetch("http://127.0.0.1:5001/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: content }),
+        body: JSON.stringify({ 
+          query: content,
+          language: selectedLanguage 
+        }),
       });
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
@@ -152,6 +157,11 @@ const App = () => {
             </select>
           </div>
             
+          <LanguageSelector
+            selectedLanguage={selectedLanguage}
+            onLanguageChange={setSelectedLanguage}
+          />
+
           <textarea
             id="userInput"
             value={userInput}
@@ -200,7 +210,7 @@ const App = () => {
                       <td>
                         {editingStory === idx ? (
                           <textarea
-                            id = "editUserStory"
+                            id="editUserStory"
                             value={tempContent}
                             onChange={(e) => setTempContent(e.target.value)}
                             rows={3}
@@ -220,8 +230,8 @@ const App = () => {
                       <td>
                         {editingStory === idx ? (
                           <>
-                            <button class="saveEdit" onClick={handleSaveEdit}>Save</button>
-                            <button class="saveEdit" onClick={handleCancelEdit}>Cancel</button>
+                            <button className="saveEdit" onClick={handleSaveEdit}>Save</button>
+                            <button className="saveEdit" onClick={handleCancelEdit}>Cancel</button>
                           </>
                         ) : (
                           <button onClick={() => handleEditClick(idx)}>

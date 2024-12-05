@@ -112,3 +112,22 @@
   font-size: 0.9em;
   text-align: left;
 }
+
+#languageSelector {
+  display: flex;
+  justify-content: flex-start;
+  margin: 1em 2em;
+}
+
+.language-dropdown {
+  background-color: var(--input-background-color);
+  color: var(--input-text-color);
+  border: 5px solid var(--input-background-color);
+  border-radius: 20px;
+  padding: 0.5em;
+  cursor: pointer;
+}
+
+.language-dropdown:hover {
+  border-color: var(--input-text-color);
+}
