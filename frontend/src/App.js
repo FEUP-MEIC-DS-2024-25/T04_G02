@@ -199,7 +199,7 @@ const App = () => {
                   <tr>
                     <th>Index</th>
                     <th>User Story</th>
-                    <th>Acceptance Criteria</th>
+                    {/* <th>Acceptance Criteria</th> */}
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -220,13 +220,13 @@ const App = () => {
                           story.user_story
                         )}
                       </td>
-                      <td>
+                      {/* <td>
                         <ul>
                           {story.acceptance_criteria.map((ac, i) => (
                             <li key={i}>{ac}</li>
                           ))}
                         </ul>
-                      </td>
+                      </td> */}
                       <td>
                         {editingStory === idx ? (
                           <>
@@ -246,6 +246,9 @@ const App = () => {
               <div id="buttonContainer">
                 <button id="exportButton" onClick={downloadUserStories}>
                   Download Stories
+                </button>
+                <button id="regenerateButton" onClick={handleSubmit} style={{ marginLeft: '10px' }}>
+                  Regenerate User Stories
                 </button>
               </div>
             </div>
