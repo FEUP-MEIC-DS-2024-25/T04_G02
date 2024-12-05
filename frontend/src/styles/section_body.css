@@ -7,15 +7,42 @@
     --input-text-color:#e1e1e1;
     --submit-color: rgb(61, 171, 46);
   
-  }
-  
-  body{
+}
+
+html, body {
+  overflow: hidden;
+}
+
+body, html, main{
+  height: 100%;
+  margin: 0;
+}
+
+body{
     background-color: var(--body-background-color);
     color: var(--body-text-color);
     font-family: Arial, Helvetica, sans-serif;
-    overflow-y: scroll;
-    margin: 0;
-  }
+    overflow-y: hidden;
+}
+
+#main{
+  display: flex;
+  height: 100%;
+}
+
+#sectionContent {
+  flex: 1;
+  height: 100%;
+  overflow-y: auto;
+  width: 80%;
+  margin: auto;
+}
+
+#projectContent {
+  width: 80%;
+  margin: auto;
+}
+
 
 button {
     background: none;

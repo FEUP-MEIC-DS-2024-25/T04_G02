@@ -12,7 +12,7 @@
   color: var(--input-text-color);
 }
 
-#sectionInput{
+#sectionInput, #sectionRequirements{
   background-color: var(--header-background-color);
   color: var(--header-text-color);
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
@@ -38,16 +38,40 @@
 }
 
 
-#sectionInput #userInput {
+#sectionInput #reqInput{
   background-color: var(--input-background-color);
   color: var(--input-text-color);
   border: 5px solid var(--input-background-color);
   border-radius: 20px;
   display: block;
-  margin: auto;
   padding: 2em;
-  width: 80%;
+  width: 100%;
   resize: none;
+}
+
+#sectionRequirements p{
+  background-color: var(--input-background-color);
+  color: var(--input-text-color);
+  border: 5px solid var(--input-background-color);
+  border-radius: 20px;
+  display: block;
+  margin: 0;
+  padding: 1em;
+  width: 100%;
+  overflow-y: auto;
+  text-align:left;
+  margin: 1em 0 1em 0;
+}
+
+#sectionInput #nameInput {
+  background-color: var(--input-background-color);
+  color: var(--input-text-color);
+  border: 5px solid var(--input-background-color);
+  border-radius: 20px;
+  display: block;
+  width: 33%;
+  padding: 1em;
+  margin-bottom: 1em;
 }
 
 #sectionInput #submitButton, #sectionInput::file-selector-button{
@@ -64,6 +88,11 @@
   background-color: var(--input-text-color);
   border: 5px solid var(--input-text-color);
   cursor: pointer;
+}
+
+#sectionInput {
+  width: 80%;
+  margin: 2em auto auto auto;
 }
 
 #uploadButton::file-selector-button {
@@ -111,4 +140,18 @@
   margin: 0.5em 0;
   font-size: 0.9em;
   text-align: left;
+}
+
+.versionSelect{
+  display: flex;
+  color: var(--input-text-color);
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.versionSelect button{
+  display: flex;
+  color: var(--input-text-color);
+  flex-direction: row;
+  justify-content: flex-end;
 }
