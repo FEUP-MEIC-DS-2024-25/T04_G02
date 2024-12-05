@@ -134,9 +134,9 @@ const App = () => {
       <main>
         <SectionInput />
         <div id="sectionInput">
-          <h1>User Story Generator</h1>
+        <h1>User Story Generator</h1>
+        <div className="selectors-container">
           <div id="divProject">
-            <label htmlFor="project-dropdown">Select Project: </label>
             <select
               id="project-dropdown"
               value={selectedProjectId || ""}
@@ -156,11 +156,11 @@ const App = () => {
               ))}
             </select>
           </div>
-            
           <LanguageSelector
             selectedLanguage={selectedLanguage}
             onLanguageChange={setSelectedLanguage}
           />
+        </div>
 
           <textarea
             id="userInput"
