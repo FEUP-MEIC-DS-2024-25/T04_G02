@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/sidebar.css';
+import { Link } from 'react-router-dom';
 
-const Sidebar = ({setSelectedProject, isOpen}) => {
+const Sidebar = ({isOpen,update, setUpdate}) => {
   const [error, setError] = useState("");
   const [projects, setProjects] = useState([]);
 
@@ -10,10 +11,13 @@ const Sidebar = ({setSelectedProject, isOpen}) => {
     fetchProjects();
   }, [isOpen]);
 
-  const handleSelectProject = (project) => {
-      setSelectedProject(project);
-  };
+  useEffect(() => {
+    if(update) {
+      fetchProjects();
+      setUpdate(false)}
+  }, [update]);
 
+  
   const fetchProjects = async () => {
     try {
       const response = await fetch("http://localhost:5001/projects");
@@ -30,16 +34,14 @@ const Sidebar = ({setSelectedProject, isOpen}) => {
 
   return (
     <nav className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
-      <button id="newButton" onClick={() => handleSelectProject(null)}>
-        New Project
-      </button>
+      <Link id="newButton" to="/">New Project</Link>
       <div id="divProjects">
         <h4>Projects</h4>
         {projects.length > 0 ? (
           <ul>
             {projects.map((project, index) => (
-              <li className='projectsOp' key={index} onClick={() => handleSelectProject(project)}>
-                {project.name}
+              <li className='projectsOp' key={index} >
+                <Link to={`/project/${project.id}`} state={{ name: project.name }}>{project.name} </Link>
               </li>
             ))}
           </ul> ):
