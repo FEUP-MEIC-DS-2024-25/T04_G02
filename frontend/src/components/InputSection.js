@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import ModalInfo from "./ModalInfo";
 import { useNavigate } from 'react-router-dom';
 import { Modal, Spinner } from "react-bootstrap";
+import LanguageSelector from "./LanguageSelector";
 
 const InputSection = ({setUpdate}) => {
   const [reqInput, setReqInput] = useState("");
@@ -9,6 +10,7 @@ const InputSection = ({setUpdate}) => {
   const [file, setFile] = useState(null);
   const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState("en");
   const navigate = useNavigate();
 
   const handleFileChange = (e) => {
@@ -48,7 +50,7 @@ const InputSection = ({setUpdate}) => {
       const response = await fetch("http://localhost:5001/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name, query: content }),
+        body: JSON.stringify({ name: name, query: content, language: selectedLanguage}),
       });
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
@@ -70,6 +72,9 @@ const InputSection = ({setUpdate}) => {
     } catch (error) {
       setError(`Failed to generate user stories:  ${error}.`);
       console.error(error);
+    }
+    finally{
+      setShowModal(false);
     }
     
   };
@@ -93,6 +98,10 @@ const InputSection = ({setUpdate}) => {
     <div id="sectionInput">
       <h1>User Story Generator</h1>
       <ModalInfo />
+      <LanguageSelector
+         selectedLanguage={selectedLanguage}
+         onLanguageChange={setSelectedLanguage}
+      />
       <input
         id="nameInput"
         type="text"

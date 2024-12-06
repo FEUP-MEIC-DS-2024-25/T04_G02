@@ -7,3 +7,4 @@ package-lock.json
 *.env
 hero-alliance-feup-ds-24-25-24cfc82834ee.json
 my-ds-teste-firebase-adminsdk-gr29f-bc523b8a4f.json
+static/script/index.js

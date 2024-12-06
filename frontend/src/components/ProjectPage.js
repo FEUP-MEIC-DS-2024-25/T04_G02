@@ -3,9 +3,11 @@ import { useParams, useLocation } from 'react-router-dom';
 import { Modal, Spinner } from "react-bootstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import LanguageSelector from "./LanguageSelector";
 
 
 const ProjectPage = () => {
+
   const [error, setError] = useState("");
   
 
@@ -14,7 +16,6 @@ const ProjectPage = () => {
   const [userStoryIndex, setUserStoryIndex] = useState(0);
   const [requirements, setRequirements] = useState({});
   const [userStories, setUserStories] = useState([]);
-
   const numberVersion = useRef(0);
 
   const { projectId } = useParams();
@@ -25,6 +26,10 @@ const ProjectPage = () => {
   const [editContent, setEditContent] = useState(requirements.content);
 
   const [showModal, setShowModal] = useState(false);
+
+  const [editingStory, setEditingStory] = useState(null);
+  const [tempContent, setTempContent] = useState("");
+  const [selectedLanguage, setSelectedLanguage] = useState("en");
 
   useEffect(() => {
     if(!version){
@@ -42,6 +47,7 @@ const ProjectPage = () => {
     if(versions.length === 0) return
     setRequirements({content: versions[currentIndex].content, version:versions[currentIndex].version});
     numberVersion.current = versions[currentIndex].user_stories.length
+    setEditContent(versions[currentIndex].content)
   }, [currentIndex, versions]); 
 
 
@@ -103,6 +109,10 @@ const ProjectPage = () => {
       setShowModal(true);
       let content = editContent;
 
+      if(!newContent){
+        content = requirements.content
+      }
+
       if (!content.trim()) {
         throw new Error("Content cannot be null or an empty string.");
       }
@@ -110,7 +120,7 @@ const ProjectPage = () => {
       const response = await fetch("http://localhost:5001/regenerate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ project_id: projId, query: content, req_version:reqVersion, newContent: newContent }),
+        body: JSON.stringify({ project_id: projId, query: content, req_version:reqVersion, newContent: newContent , language: selectedLanguage}),
       });
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
@@ -164,7 +174,7 @@ const ProjectPage = () => {
     link.click();
   };
 
-  const handleEditClick = () => {
+  const handleEditClickReq = () => {
       setIsEditing(true);
   };
 
@@ -178,11 +188,38 @@ const ProjectPage = () => {
     setEditContent(requirements.content)
   };
 
+  const handleEditClick = (storyIndex) => {
+    const storyToEdit = userStories[storyIndex];
+    setEditingStory(storyIndex);
+    setTempContent(storyToEdit.user_story);
+  }
+
+  const handleCancelEdit = () => {
+    setEditingStory(null);
+    setTempContent("");
+  }
+
+  const handleSaveEdit = () => {
+    if (!tempContent.trim()) {
+      setError("User story content cannot be empty.");
+      return;
+    }
+    const updatedStories = [...userStories];
+    updatedStories[editingStory].user_story = tempContent;
+    setUserStories(updatedStories);
+    setEditingStory(null);
+    setTempContent("");
+    setError("");
+  };
 
   return (
     <>
       <div id="sectionContent">
         <div id="projectContent">
+          <LanguageSelector
+            selectedLanguage={selectedLanguage}
+            onLanguageChange={setSelectedLanguage}
+          />
             <div id="sectionRequirements">
                 <h3 id="projectName">{name}</h3>
                 {isEditing ? (
@@ -197,7 +234,7 @@ const ProjectPage = () => {
                   <div>
                     <p>{requirements.content}</p>
                     < div className="versionSelect">
-                    <FontAwesomeIcon icon={faPenToSquare} onClick={handleEditClick}  style={{ cursor: 'pointer' }}/>
+                    <FontAwesomeIcon icon={faPenToSquare} onClick={handleEditClickReq}  style={{ cursor: 'pointer' }}/>
                     <button onClick={goBack} disabled={currentIndex === 0}>⮜ </button>
                     <span>{currentIndex + 1}/{versions.length}</span>
                     <button onClick={goForward} disabled={currentIndex === versions.length - 1}> ⮞</button>
@@ -220,9 +257,40 @@ const ProjectPage = () => {
                     {userStories.map((story, idx) => (
                       <tr key={idx}>
                         <td>{story.index}</td>
-                        <td>{story.user_story}</td>
+                        <td>
+                          {editingStory === idx ? (
+                            <textarea
+                              id="editUserStory"
+                              value={tempContent}
+                              onChange={(e) => setTempContent(e.target.value)}
+                              rows={3}
+                              style={{ width: '100%' }}
+                            />
+                          ) : (
+                            story.user_story
+                          )}
+                        </td>
+                        <td>
+                          {editingStory === idx ? (
+                            <>
+                              <button className="saveEdit" onClick={handleSaveEdit}>Save</button>
+                              <button className="saveEdit" onClick={handleCancelEdit}>Cancel</button>
+                            </>
+                          ) : (
+                            <button onClick={() => handleEditClick(idx)}>
+                              <img src="/edit.png" alt="Edit this user story" style={{ width: "20px", height: "20px" }} />
+                            </button>
+                          )}
+                        </td>
                       </tr>
                     ))}
+                  {/*<tbody>
+                    {userStories.map((story, idx) => (
+                      <tr key={idx}>
+                        <td>{story.index}</td>
+                        <td>{story.user_story}</td>
+                      </tr>
+                    ))}*/}
                   </tbody>
                 </table>
               </div>
@@ -234,6 +302,9 @@ const ProjectPage = () => {
               <div id="buttonContainer">
                 <button id="exportButton" onClick={downloadUserStories}>
                   Download Stories
+                </button>
+                <button id="regenerateButton" onClick={() => handleSubmit(projectId, requirements.version, false)} style={{ marginLeft: '10px' }}>
+                  Regenerate User Stories
                 </button>
               </div>
               <LoadingModal show={showModal} onHide={() => setShowModal(false)} />
@@ -264,30 +335,3 @@ const LoadingModal = ({ show, onHide }) => {
     </Modal>
   );
 };
-
-
-function EditableText({ initialContent }) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [content, setContent] = useState(initialContent);
-
-  const handleEditClick = () => {
-    setIsEditing(true);
-  };
-
-  const handleSaveClick = () => {
-    setIsEditing(false);
-  };
-
-  return (
-    <div>
-      {isEditing ? (
-        <div>
-          <textarea value={content} onChange={(e) => setContent(e.target.value)} />
-          <button onClick={handleSaveClick}>Salvar</button>
-        </div>
-      ) : (
-        <p onClick={handleEditClick}>{content}</p>
-      )}
-    </div>
-  );
-}

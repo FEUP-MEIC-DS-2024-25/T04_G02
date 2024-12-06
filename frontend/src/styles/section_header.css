@@ -155,3 +155,21 @@ header div a, header div button {
   color: var(--text-color);
   font-size: 1.1em;
 }
+
+header div a {
+  color: var(--header-text-color);
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  transition: background-color 0.2s, color 0.2s;
+  margin-right: 10px;
+}
+
+header div a:hover {
+  background-color: var(--header-text-color);
+  color: var(--header-background-color);
+}
+
+header div a:active {
+  transform: scale(0.98);
+}
