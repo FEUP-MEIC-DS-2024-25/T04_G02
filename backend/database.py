@@ -82,7 +82,13 @@ def save_requirement(project_id, content, new):
     project_ref = db.collection("ReqToStory").document(project_id)
     requirements_ref = project_ref.collection("Requirements")
 
-    last_version = project_ref.get("n_versions", 0)
+    doc_snapshot = project_ref.get()
+    
+    if doc_snapshot.exists:
+        data = doc_snapshot.to_dict()
+        last_version = data.get("n_versions", 0)
+    else:
+        last_version = 0
 
     if new:
         requirement = requirements_ref.document()
@@ -112,9 +118,10 @@ def save_requirement(project_id, content, new):
 def get_requirement_id(project_id, version):
     project_ref = db.collection("ReqToStory").document(project_id)
     requirements_ref = project_ref.collection("Requirements")
-    requirement = requirements_ref.where("version", "==", version).get()
+    requirements = requirements_ref.where("version", "==", version).get()
 
-    if requirement:
+    if requirements:
+        requirement = requirements[0]
         return requirement.id 
     else:
         return None 
