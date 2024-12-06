@@ -38,7 +38,7 @@
 }
 
 
-#sectionInput #reqInput{
+#sectionInput #reqInput, .editReq #reqInput{
   background-color: var(--input-background-color);
   color: var(--input-text-color);
   border: 5px solid var(--input-background-color);
@@ -147,6 +147,7 @@
   color: var(--input-text-color);
   flex-direction: row;
   justify-content: flex-end;
+  align-items:center;
 }
 
 .versionSelect button{
