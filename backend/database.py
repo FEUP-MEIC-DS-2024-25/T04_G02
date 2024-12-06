@@ -78,25 +78,25 @@ def save_project(name):
     return (new_project.id, 0) 
 
 
-def save_requirement(project_info, content, new):
-    project_ref = db.collection("ReqToStory").document(project_info[0])
+def save_requirement(project_id, content, new):
+    project_ref = db.collection("ReqToStory").document(project_id)
     requirements_ref = project_ref.collection("Requirements")
+
+    last_version = project_ref.get("n_versions", 0)
 
     if new:
         requirement = requirements_ref.document()
         requirement.set({
-            "version": project_info[1] + 1,
+            "version": last_version + 1,
             "content": content,
             "n_us_versions": 0
         })
 
-        project_ref.update({"n_versions": project_info[1] + 1})
+        project_ref.update({"n_versions": last_version + 1})
 
         return requirement.id
 
     else:
-        last_version = len(list(requirements_ref.stream()))
-
         requirement = requirements_ref.where("version", "==", last_version).get()
 
         if requirement:
@@ -107,7 +107,17 @@ def save_requirement(project_info, content, new):
     if requirement:
         return requirement.id 
     else:
-        return None  
+        return None 
+
+def get_requirement_id(project_id, version):
+    project_ref = db.collection("ReqToStory").document(project_id)
+    requirements_ref = project_ref.collection("Requirements")
+    requirement = requirements_ref.where("version", "==", version).get()
+
+    if requirement:
+        return requirement.id 
+    else:
+        return None 
 
 def save_user_stories(project_id, req_id, user_stories):
     req_ref = db.collection("ReqToStory").document(project_id).collection("Requirements").document(req_id)
@@ -128,3 +138,16 @@ def save_user_stories(project_id, req_id, user_stories):
         })
 
         req_ref.update({"n_us_versions": n_us_versions + 1})
+
+
+def delete_project(id):
+    project_ref = db.collection("ReqToStory").document(id)
+    if(project_ref):
+        project_ref.delete()
+
+
+def delete_requirement(project_id, req_id):
+    req_ref = db.collection("ReqToStory").document(project_id).collection("Requirements").document(req_id)
+    if(req_ref):
+        req_ref.delete()
+    

@@ -27,12 +27,9 @@ def generate_response():
     project_name = data.get("name")
     query = data.get("query")
     
-    project_info = save_project(project_name)
-
     if not query:
         return jsonify({"error": "No query provided"}), 400
     
-    requirements_id = save_requirement(project_info, query, True)
 
     prompt = str(
         [
@@ -47,8 +44,13 @@ def generate_response():
     response = model.generate_content(prompt)
     result = response.text.replace("```json", "").replace("```", "")
 
+    project_info = save_project(project_name)
+
+    requirements_id = save_requirement(project_info[0], query, True)
 
     save_user_stories(project_info[0], requirements_id, result)
+
+    
 
     content = {
         "project_id" : project_info[0],
@@ -61,15 +63,13 @@ def generate_response():
 @blueprint.route("/regenerate", methods=["POST"])
 def regenerate_response():
     data = request.get_json()
-    project_name = data.get("name")
+    project_id = data.get("project_id")
+    req_version = data.get("req_version")
     query = data.get("query")
-    
-    project_info = save_project(project_name)
+    newContent = data.get("newContent")
 
     if not query:
         return jsonify({"error": "No query provided"}), 400
-    
-    requirements_id = save_requirement(project_info, query, True)
 
     prompt = str(
         [
@@ -84,12 +84,15 @@ def regenerate_response():
     response = model.generate_content(prompt)
     result = response.text.replace("```json", "").replace("```", "")
 
+    if(newContent):
+        requirements_id = save_requirement(project_id, query, newContent)
+    else:
+        requirements_id = get_requirement_id(project_id, req_version)
+    
+    if(requirements_id == None):
+        return jsonify({"error": "Requeriment don't exist"}), 404
+    
 
-    save_user_stories(project_info[0], requirements_id, result)
+    save_user_stories(project_id, requirements_id, result)
 
-    content = {
-        "project_id" : project_info[0],
-        "user_stories" : result
-    }
-
-    return jsonify({"response": content}), 200
+    return jsonify({"response": result}), 200
